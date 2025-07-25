@@ -103,7 +103,7 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <p className="copyright">
-            © 2024 FitGym. Todos los derechos reservados.
+            © 2025 FitGym. Todos los derechos reservados.
           </p>
         </div>
       </div>
