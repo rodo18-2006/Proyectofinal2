@@ -1,0 +1,45 @@
+.admin-footer {
+  background-color: #1a1a1a;
+  color: #cfcfcf;
+  padding: 1rem 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+}
+
+.admin-footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-footer-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-footer-brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #ff3c3c;
+  margin-bottom: 0.25rem;
+}
+
+.admin-footer-nav {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-footer-link {
+  color: #cfcfcf;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.admin-footer-link:hover {
+  color: #ff3c3c;
+}
