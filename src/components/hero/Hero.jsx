@@ -14,7 +14,7 @@ export default function Hero() {
             entrenadores profesionales y un ambiente motivador te esperan.
           </p>
           <div className="hero-buttons">
-            <Link to="/plans" className="btn btn-primary btn-large">
+            <Link to="/pagar" className="btn btn-primary btn-large">
               Ver Planes
             </Link>
             <Link to="/contact" className="btn btn-outline btn-large">

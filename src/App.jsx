@@ -6,8 +6,9 @@ import ContactPage from "./pages/ContactPage";
 import PlanDetailsPage from "./pages/PlanDetailsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import "./App.css";
-import ClasesC from "./pages/clasesC";
-import Cuenta from "./pages/Cuenta";
+import Planes from "./pages/Planes";
+
+
 
 function App() {
   return (
@@ -18,9 +19,8 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/plan-details/:planId" element={<PlanDetailsPage />} />
+          <Route path="/pagar" element={<Planes />} />
           <Route path="*" element={<NotFoundPage />} />
-          <Route path="/clases" element={<ClasesC />}/>
-          <Route path="/cuenta" element={<Cuenta />}/>
         </Routes>
       </div>
     </Router>
