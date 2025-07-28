@@ -13,7 +13,7 @@ const teamMembers = [
     name: "Mateo Manzares",
     role: "Frontend Developer",
     image: "./img/mateo.jpg",
-    description: "Experta en UI/UX y React",
+    description: "Experto en UI/UX y React",
   },
   {
     name: "Celeste Galindo",
