@@ -1,27 +1,6 @@
 import { Container, Row, Col, Card } from "react-bootstrap";
 
-const testimonials = [
-  {
-    name: "María González",
-    comment:
-      "Excelente gimnasio, los entrenadores son muy profesionales y el ambiente es motivador.",
-    rating: 5,
-  },
-  {
-    name: "Juan Pérez",
-    comment:
-      "Las instalaciones son de primera calidad y los horarios son muy flexibles.",
-    rating: 5,
-  },
-  {
-    name: "Sofia Martinez",
-    comment:
-      "Me encanta la variedad de clases que ofrecen. Siempre hay algo nuevo que probar.",
-    rating: 5,
-  },
-];
-
-export default function Testimonials() {
+const Testimonials = ({ data }) => {
   return (
     <section className="py-5">
       <Container>
@@ -38,21 +17,19 @@ export default function Testimonials() {
         </Row>
 
         <Row className="g-4">
-          {testimonials.map((testimonial, index) => (
+          {data.map((testimonial, index) => (
             <Col key={index} md={4}>
               <Card className="h-100 border-0 shadow-sm">
-                <Card.Body className="p-4">
+                <Card.Body className="p-4 d-flex flex-column">
                   <div className="mb-3">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-warning fs-5">
-                        ⭐
-                      </span>
+                      <span key={i} className="text-warning fs-5">⭐</span>
                     ))}
                   </div>
                   <Card.Text className="fst-italic mb-3">
                     "{testimonial.comment}"
                   </Card.Text>
-                  <Card.Text className="fw-bold text-end">
+                  <Card.Text className="fw-bold text-end mt-auto">
                     - {testimonial.name}
                   </Card.Text>
                 </Card.Body>
@@ -63,4 +40,6 @@ export default function Testimonials() {
       </Container>
     </section>
   );
-}
+};
+
+export default Testimonials;
