@@ -7,7 +7,7 @@ export default function AlertasImportantes() {
     { nombre: "María Gómez", plan: "Trimestral", vence: "2025-07-22", dias: 1 },
     { nombre: "Lucas Díaz", plan: "Mensual", vence: "2025-07-25", dias: 4 },
   ];
-
+   
   const asistenciaBaja = [
     { nombre: "Laura Díaz", diasSinAsistir: 10 },
     { nombre: "Federico Gómez", diasSinAsistir: 14 },

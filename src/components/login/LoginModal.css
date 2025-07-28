@@ -183,3 +183,17 @@
     font-size: 1.5rem;
   }
 }
+
+
+.auth-link {
+  color: orange;
+  cursor: pointer;
+  border-bottom: 1px solid orange;
+  font-weight: 500;
+  transition: 0.2s ease-in-out;
+}
+
+.auth-link:hover {
+  color: orange;
+  border-bottom: 1px solid orange;
+}

@@ -1,8 +1,8 @@
+// routes/usuarios.js
 const express = require("express");
 const router = express.Router();
-const Usuario = require("../models/Usuario");
+const Usuario = require("../models/Usuarios");
 
-// Registro o login según un campo "accion"
 router.post("/", async (req, res) => {
   const { accion, nombre, email, contraseña } = req.body;
 
@@ -12,12 +12,24 @@ router.post("/", async (req, res) => {
       if (existe)
         return res.status(400).json({ mensaje: "El usuario ya existe" });
 
-      const nuevoUsuario = new Usuario({ nombre, email, contraseña });
+      const rol = email === "admin@fitgym.com" ? "admin" : "usuario";
+
+      const nuevoUsuario = new Usuario({ nombre, email, contraseña, rol });
       await nuevoUsuario.save();
+
+      const usuarioResponse = {
+        id: nuevoUsuario._id,
+        nombre: nuevoUsuario.nombre,
+        email: nuevoUsuario.email,
+        rol: nuevoUsuario.rol,
+      };
 
       return res
         .status(201)
-        .json({ mensaje: "Usuario registrado correctamente" });
+        .json({
+          mensaje: "Usuario registrado correctamente",
+          usuarioNuevo: usuarioResponse,
+        });
     }
 
     if (accion === "login") {
@@ -25,12 +37,30 @@ router.post("/", async (req, res) => {
       if (!usuario || usuario.contraseña !== contraseña) {
         return res.status(401).json({ mensaje: "Credenciales incorrectas" });
       }
-      return res.status(200).json({ mensaje: "Login exitoso", usuario });
+
+      const { nombre, email: userEmail, rol, _id } = usuario;
+
+      return res.status(200).json({
+        mensaje: "Login exitoso",
+        usuario: { id: _id, nombre, email: userEmail, rol },
+      });
     }
 
     return res.status(400).json({ mensaje: "Acción inválida" });
   } catch (error) {
-    res.status(500).json({ mensaje: "Error en el servidor", error });
+    console.error(error);
+    res.status(500).json({ mensaje: "Error en el servidor" });
+  }
+});
+
+// Ruta GET para traer todos los usuarios sin contraseña
+router.get("/", async (req, res) => {
+  try {
+    const usuarios = await Usuario.find({}, "-contraseña");
+    res.status(200).json(usuarios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error al obtener usuarios" });
   }
 });
 

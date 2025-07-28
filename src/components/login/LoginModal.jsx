@@ -1,118 +1,130 @@
-"use client";
+import React, { useContext, useState } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import { UsuariosContext } from "../context/UsuariosContext";
 
-import { useState } from "react";
-import "./LoginModal.css";
+export default function LoginModal({ isOpen, onClose }) {
+  const { usuarios, setUsuarios } = useContext(UsuariosContext);
+  const [modo, setModo] = useState("login");
+  const [form, setForm] = useState({
+    usuario: "",
+    email: "",
+    contraseña: "",
+    rol: "socio",
+    nombre: "",
+  });
 
-export default function LoginModal({ isOpen, onClose, onLogin }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    const endpoint =
+      modo === "register"
+        ? "http://localhost:5000/api/usuarios/registrar"
+        : "http://localhost:5000/api/usuarios/login";
 
-    setTimeout(() => {
-      if (email === "admin@fitgym.com" && password === "admin123") {
-        localStorage.setItem("isAdmin", "true");
-        localStorage.setItem("isLoggedIn", "true");
-        onLogin(true); // Avisás al padre que es admin
-      } else if (email === "user@fitgym.com" && password === "user123") {
-        localStorage.setItem("isAdmin", "false");
-        localStorage.setItem("isLoggedIn", "true");
-        onLogin(false); // Avisás al padre que es usuario normal
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (modo === "register") {
+        setUsuarios([...usuarios, data.usuario]);
+        alert("Registro exitoso. Ahora podés iniciar sesión.");
+        setModo("login");
       } else {
-        setError("Credenciales incorrectas");
+        alert("Login exitoso");
+        onClose();
       }
-      setLoading(false);
-    }, 1000);
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  const handleClose = () => {
-    setEmail("");
-    setPassword("");
-    setError("");
-    onClose();
-  };
-
-  if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">Iniciar Sesión</h2>
-          <button className="close-btn" onClick={handleClose}>
-            ×
-          </button>
-        </div>
-
-        <div className="modal-body">
-          <p className="modal-subtitle">
-            Ingresa tus credenciales para acceder
-          </p>
-
-          <form onSubmit={handleSubmit} className="login-form">
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                className="form-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Contraseña
-              </label>
-              <div className="password-input">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  className="form-input"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+    <Modal show={isOpen} onHide={onClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title className="w-100 text-center">
+          {modo === "login" ? "Iniciar sesión" : "Registrarse"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          {modo === "register" && (
+            <>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  name="nombre"
+                  placeholder="Nombre completo"
+                  onChange={handleChange}
                   required
                 />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
-                </button>
-              </div>
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <button
-              type="submit"
-              className="btn btn-primary btn-full"
-              disabled={loading}
-            >
-              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
-            </button>
-          </form>
-
-          <div className="demo-credentials">
-            <p className="demo-title">Credenciales de prueba:</p>
-            <p className="demo-item">Admin: admin@fitgym.com / admin123</p>
-            <p className="demo-item">Usuario: user@fitgym.com / user123</p>
-          </div>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  name="rol"
+                  placeholder="Rol"
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </>
+          )}
+          <Form.Group className="mb-3">
+            <Form.Control
+              type="text"
+              name="usuario"
+              placeholder="Usuario"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Control
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Control
+              type="password"
+              name="contraseña"
+              placeholder="Contraseña"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-100 rounded-pill"
+          >
+            {modo === "login" ? "Entrar" : "Registrarme"}
+          </Button>
+        </Form>
+        <div className="text-center mt-3">
+          <button
+            type="button"
+            className="btn btn-link p-0"
+            style={{ textDecoration: "underline" }}
+            onClick={() => setModo(modo === "login" ? "register" : "login")}
+          >
+            {modo === "login"
+              ? "¿No tenés una cuenta?"
+              : "¿Ya tenés una cuenta?"}
+          </button>
         </div>
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 }
