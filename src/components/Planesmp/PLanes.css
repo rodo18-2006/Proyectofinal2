@@ -1,0 +1,52 @@
+
+
+body{
+    background-color: #000;
+}
+.planes-container {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 3rem;
+  flex-wrap: wrap; 
+}
+
+
+.planes-container .card {
+  width: 22rem;
+  background-color: #1a1a1a;
+  color: white;
+  border: 1px solid #333;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.planes-container .card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+
+.planes-container .card-img-top {
+  height: 180px;
+  object-fit: cover;
+}
+
+
+.planes-container .tex {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+
+.planes-container .btn-primary {
+  background-color: #ff2a00;
+  border: none;
+}
+
+.planes-container .btn-primary:hover {
+  background-color: #ff2a00;
+}
