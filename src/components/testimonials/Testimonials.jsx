@@ -17,13 +17,15 @@ const Testimonials = ({ data }) => {
         </Row>
 
         <Row className="g-4">
-          {data.map((testimonial, index) => (
-            <Col key={index} md={4}>
+          {data.map((testimonial) => (
+            <Col key={testimonial._id} md={4}>
               <Card className="h-100 border-0 shadow-sm">
                 <Card.Body className="p-4 d-flex flex-column">
                   <div className="mb-3">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-warning fs-5">⭐</span>
+                      <span key={i} className="text-warning fs-5">
+                        ⭐
+                      </span>
                     ))}
                   </div>
                   <Card.Text className="fst-italic mb-3">

@@ -7,7 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Conectar a MongoDB
 const uri = process.env.MONGODB_URI;
 mongoose
   .connect(uri, {
@@ -17,9 +16,13 @@ mongoose
   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
   .catch((err) => console.error("❌ Error al conectar a MongoDB Atlas:", err));
 
-// ✅ Cargar rutas (afuera del GET "/")
+// Rutas existentes
 const userRoutes = require("./routes/usuarios");
 app.use("/api/usuarios", userRoutes);
+
+const commentRoutes = require("./routes/comment"); // <- plural si tu archivo se llama así
+app.use("/api/comment", commentRoutes);
+
 
 // Ruta simple de prueba
 app.get("/", (req, res) => {

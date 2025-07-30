@@ -9,15 +9,11 @@ import Testimonials from "../components/testimonials/Testimonials";
 import Trainers from "../components/trainers/Trainers";
 import Weather from "../components/weather/Weather";
 import Paginacion from "../components/paginacion/Paginacion";
-import Comments from "../components/agregarcomentario/Comments";
 
-
-
-
+import ComentariosContainer from "../components/comentarioscontainer/ComentariosContainer";
 
 export default function HomePage() {
-  const allTestimonials = [
-
+  const [allTestimonials, setAllTestimonials] = useState([
     { name: "Carlos Quintana", comment: "¡Excelente atención!", rating: 5 },
     {
       name: "Bautista Alavaréz",
@@ -50,7 +46,7 @@ export default function HomePage() {
         "Me encanta la variedad de clases que ofrecen. Siempre hay algo nuevo que probar.",
       rating: 5,
     },
-  ];
+  ]);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -66,13 +62,10 @@ export default function HomePage() {
     setCurrentPage(page);
   };
 
-
-  // Recibimos el comentario nuevo desde CommentForm y actualizamos la lista y la paginación
   const handleNewComment = (nuevoComentario) => {
     setAllTestimonials([nuevoComentario, ...allTestimonials]);
     setCurrentPage(1);
   };
-
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -82,20 +75,13 @@ export default function HomePage() {
       <Services />
       <Plans />
       <Trainers />
-
-      <Testimonials data={currentTestimonials} />
+      <ComentariosContainer data={currentTestimonials} />
+   
       <Paginacion
         itemsPerPage={itemsPerPage}
         totalItems={allTestimonials.length}
         onPageChange={handlePageChange}
       />
-
-
-      {/* Componente Form separado */}
-      <CommentForm onNewComment={handleNewComment} />
-
-
-      <Comments/>
 
       <Footer />
     </div>
