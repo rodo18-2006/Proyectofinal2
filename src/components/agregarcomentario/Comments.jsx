@@ -13,15 +13,26 @@ export default function Comments({ onNewComment }) {
       comment: newComment,
       rating: parseInt(newRating),
     };
-    if (onNewComment) {
-      onNewComment(nuevoComentario);
-    }
-    setNewName("");
+   
+    fetch("http://localhost:5000/api/comment", {
+method: "POST",
+headers: { "Content-Type": "aplication/json"},
+body: JSON.stringify(nuevoComentario),
+   })
+
+   .then((res) => res.json() )
+   .then((data) =>{ 
+
+    setNewName(data);
     setNewComment("");
     setNewRating(5);
     setMensajeEnviado(true);
-    setTimeout(() => setMensajeEnviado(false), 3000);
-  };
+    setTimeout(() => setMensajeEnviado(false), 3000);} )
+
+    .catch((err) => console.error("Error al enviar comentario:", err));
+ };
+ 
+
   return (
     <section className="form-container">
       <h2>Dejá tu comentario🗨️</h2>
