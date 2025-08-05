@@ -7,13 +7,14 @@ import PlanDetailsPage from "./pages/PlanDetailsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import "./App.css";
 import Planes from "./pages/Planes";
-
+import  ScrollToTopButton from "./components/ScrollToTopButton/ScrollToTopButton";
 
 
 function App() {
   return (
     <Router>
       <div className="App">
+       <ScrollToTopButton /> 
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />

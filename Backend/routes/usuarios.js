@@ -1,37 +1,66 @@
 const express = require("express");
-const router = express.Router();
+const bcrypt = require("bcryptjs");
 const Usuario = require("../models/Usuario");
 
-// Registro o login según un campo "accion"
-router.post("/", async (req, res) => {
-  const { accion, nombre, email, contraseña } = req.body;
+const router = express.Router();
 
+// Registro
+router.post("/registrar", async (req, res) => {
   try {
-    if (accion === "register") {
-      const existe = await Usuario.findOne({ email });
-      if (existe)
-        return res.status(400).json({ mensaje: "El usuario ya existe" });
+    const { nombre, apellido, telefono, dni, email, contraseña, plan } = req.body;
 
-      const nuevoUsuario = new Usuario({ nombre, email, contraseña });
-      await nuevoUsuario.save();
-
-      return res
-        .status(201)
-        .json({ mensaje: "Usuario registrado correctamente" });
+    const usuarioExistente = await Usuario.findOne({ email });
+    if (usuarioExistente) {
+      return res.status(400).json({ mensaje: "El email ya está registrado" });
     }
 
-    if (accion === "login") {
-      const usuario = await Usuario.findOne({ email });
-      if (!usuario || usuario.contraseña !== contraseña) {
-        return res.status(401).json({ mensaje: "Credenciales incorrectas" });
-      }
-      return res.status(200).json({ mensaje: "Login exitoso", usuario });
-    }
+    const hashedPass = await bcrypt.hash(contraseña, 10);
 
-    return res.status(400).json({ mensaje: "Acción inválida" });
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error en el servidor", error });
+    const nuevoUsuario = new Usuario({
+      nombre,
+      apellido,
+      telefono,
+      dni,
+      email,
+      contraseña: hashedPass,
+      plan,
+    });
+
+    await nuevoUsuario.save();
+
+    res.status(201).json({ mensaje: "Usuario registrado con éxito" });
+  } catch (err) {
+    res.status(500).json({ mensaje: "Error del servidor" });
   }
+});
+
+// Login
+router.post("/login", async (req, res) => {
+  try {
+    const { email, contraseña } = req.body;
+    const usuario = await Usuario.findOne({ email });
+
+    if (!usuario) return res.status(400).json({ mensaje: "Usuario no encontrado" });
+
+    const passwordValida = await bcrypt.compare(contraseña, usuario.contraseña);
+    if (!passwordValida) return res.status(400).json({ mensaje: "Contraseña incorrecta" });
+
+    res.json({ mensaje: "Login exitoso", usuario });
+  } catch (err) {
+    res.status(500).json({ mensaje: "Error del servidor" });
+  }
+});
+
+// Recuperar contraseña (simulada)
+router.post("/recuperar", async (req, res) => {
+  const { email } = req.body;
+  const usuario = await Usuario.findOne({ email });
+
+  if (!usuario) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+
+  // Aquí normalmente se enviaría un email de recuperación.
+  // Por simplicidad, se responde directamente:
+  res.json({ mensaje: "Instrucciones de recuperación enviadas al correo" });
 });
 
 module.exports = router;

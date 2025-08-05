@@ -7,9 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Conectar a MongoDB
 const uri = process.env.MONGODB_URI;
-
 mongoose
   .connect(uri, {
     useNewUrlParser: true,
@@ -18,18 +16,30 @@ mongoose
   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
   .catch((err) => console.error("❌ Error al conectar a MongoDB Atlas:", err));
 
-// Ruta de prueba
+// Rutas existentes
+const userRoutes = require("./routes/usuarios");
+app.use("/api/usuarios", userRoutes);
+
+const commentRoutes = require("./routes/comment"); // <- plural si tu archivo se llama así
+app.use("/api/comment", commentRoutes);
+
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
+
+const turnosRouter = require("./routes/turnos");
+app.use("/api/turnos", turnosRouter);
+
+const contactRoutes = require("./routes/contact");
+app.use("/api/contact", contactRoutes);
+
+const contactRoutes = require("./routes/contact");
+app.use("/api/contact", contactRoutes);
+
+
+// Ruta simple de prueba
 app.get("/", (req, res) => {
   res.send("💪 Backend del gimnasio funcionando!");
-
-
-  const userRoutes = require("./routes/usuarios");
-  app.use("/api/usuarios", userRoutes);
-
 });
-
-// Aquí después se agregan las rutas reales
-// app.use('/api/usuarios', require('./routes/userRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
