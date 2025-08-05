@@ -12,6 +12,8 @@ import ClasesC from "./pages/clasesC";
 import Cuenta from "./pages/Cuenta";
 import { UsuariosProvider } from "./components/context/UsuariosContext"; // <--- Agregá esto
 import Planes from "./pages/Planes";
+import Clases from "./components/clases/Clases";
+import SolicitarClasesC from "./pages/SolicitarClasesC";
 
 function App() {
   return (
@@ -28,7 +30,8 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/clases" element={<ClasesC />} />
             <Route path="/cuenta" element={<Cuenta />} />
-            <Route path="/pagar" element={<Planes />}/>
+            <Route path="/pagar" element={<Planes />} />
+            <Route path="/solicitar-clase" element={<SolicitarClasesC  />} />
           </Routes>
         </div>
       </Router>

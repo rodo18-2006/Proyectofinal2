@@ -14,9 +14,6 @@ export default function ComentariosContainer() {
 
   const handleNewComment = (nuevoComentario) => {
     setComments((prev) => [nuevoComentario, ...prev]);
-
-    
-  
   };
 
   return (

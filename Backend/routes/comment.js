@@ -5,10 +5,6 @@ const Comment = require("../models/Comment");
 const router = express.Router();
 
 
-
-
-
-
 // GET todos los comentarios
 router.get("/", async (req, res) => {
   try {

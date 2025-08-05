@@ -24,6 +24,14 @@ const commentRoutes = require("./routes/comment"); // <- plural si tu archivo se
 app.use("/api/comment", commentRoutes);
 
 
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
+
+const turnosRouter = require("./routes/turnos");
+app.use("/api/turnos", turnosRouter);
+
+
+
 // Ruta simple de prueba
 app.get("/", (req, res) => {
   res.send("💪 Backend del gimnasio funcionando!");

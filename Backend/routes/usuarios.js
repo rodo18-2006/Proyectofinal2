@@ -1,59 +1,67 @@
-// routes/usuarios.js
 const express = require("express");
 const router = express.Router();
 const Usuario = require("../models/Usuarios");
+const enviarCorreoBienvenida = require("../utils/mailer"); // importación del mailer
+const crypto = require("crypto");
 
-router.post("/", async (req, res) => {
-  const { accion, nombre, email, contraseña } = req.body;
-
+// Registro de usuario
+router.post("/registrar", async (req, res) => {
   try {
-    if (accion === "register") {
-      const existe = await Usuario.findOne({ email });
-      if (existe)
-        return res.status(400).json({ mensaje: "El usuario ya existe" });
+    const { nombre, email, contraseña } = req.body;
 
-      const rol = email === "admin@fitgym.com" ? "admin" : "usuario";
-
-      const nuevoUsuario = new Usuario({ nombre, email, contraseña, rol });
-      await nuevoUsuario.save();
-
-      const usuarioResponse = {
-        id: nuevoUsuario._id,
-        nombre: nuevoUsuario.nombre,
-        email: nuevoUsuario.email,
-        rol: nuevoUsuario.rol,
-      };
-
-      return res
-        .status(201)
-        .json({
-          mensaje: "Usuario registrado correctamente",
-          usuarioNuevo: usuarioResponse,
-        });
+    const existe = await Usuario.findOne({ email });
+    if (existe) {
+      return res.status(400).json({ mensaje: "El usuario ya existe" });
     }
 
-    if (accion === "login") {
-      const usuario = await Usuario.findOne({ email });
-      if (!usuario || usuario.contraseña !== contraseña) {
-        return res.status(401).json({ mensaje: "Credenciales incorrectas" });
-      }
+    const rol = email === "admin@fitgym.com" ? "admin" : "usuario";
 
-      const { nombre, email: userEmail, rol, _id } = usuario;
+    const nuevoUsuario = new Usuario({ nombre, email, contraseña, rol });
+    await nuevoUsuario.save();
 
-      return res.status(200).json({
-        mensaje: "Login exitoso",
-        usuario: { id: _id, nombre, email: userEmail, rol },
-      });
-    }
+    // Enviar correo de bienvenida
+    await enviarCorreoBienvenida(email, nombre);
 
-    return res.status(400).json({ mensaje: "Acción inválida" });
+    const usuarioResponse = {
+      id: nuevoUsuario._id,
+      nombre: nuevoUsuario.nombre,
+      email: nuevoUsuario.email,
+      rol: nuevoUsuario.rol,
+    };
+
+    res.status(201).json({
+      mensaje: "Usuario registrado correctamente",
+      usuario: usuarioResponse,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: "Error en el servidor" });
   }
 });
 
-// Ruta GET para traer todos los usuarios sin contraseña
+// Login de usuario
+router.post("/login", async (req, res) => {
+  try {
+    const { email, contraseña } = req.body;
+
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario || usuario.contraseña !== contraseña) {
+      return res.status(401).json({ mensaje: "Credenciales incorrectas" });
+    }
+
+    const { nombre, email: userEmail, rol, _id } = usuario;
+
+    res.status(200).json({
+      mensaje: "Login exitoso",
+      usuario: { id: _id, nombre, email: userEmail, rol },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error en el servidor" });
+  }
+});
+
+// Obtener todos los usuarios sin contraseña
 router.get("/", async (req, res) => {
   try {
     const usuarios = await Usuario.find({}, "-contraseña");
@@ -63,5 +71,34 @@ router.get("/", async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener usuarios" });
   }
 });
+
+// Ruta para recuperar contraseña
+router.post("/recuperar", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ mensaje: "El email es requerido" });
+
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    // Generar nueva contraseña aleatoria de 8 caracteres
+    const nuevaContraseña = crypto.randomBytes(4).toString("hex");
+
+    // Actualizar contraseña (idealmente hashearla, aquí simplificado)
+    usuario.contraseña = nuevaContraseña;
+    await usuario.save();
+
+    // Enviar mail con la nueva contraseña
+    await enviarCorreoRecuperacion(email, nuevaContraseña);
+
+    res.status(200).json({ mensaje: "Se envió un correo con la nueva contraseña" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error en el servidor" });
+  }
+});
+
 
 module.exports = router;
