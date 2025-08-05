@@ -30,7 +30,8 @@ app.use("/api/admin", adminRoutes);
 const turnosRouter = require("./routes/turnos");
 app.use("/api/turnos", turnosRouter);
 
-
+const contactRoutes = require("./routes/contact");
+app.use("/api/contact", contactRoutes);
 
 // Ruta simple de prueba
 app.get("/", (req, res) => {
