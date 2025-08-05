@@ -17,29 +17,35 @@ import CuotasPagas from "./page/CuotasPagas";
 import Pendientes from "./page/Pendientes";
 import Metas from "./page/Metas";
 import Alertas from "./page/Alertas";
+import AdminUsuariosPage from "./page/AdminUsuariosPage";
+import { UsuariosProvider } from "../src/components/context/UsuariosContext";
+
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LoginC />} />
-          <Route path="/inicio" element={<Inicio />} />
-          <Route path="/usuarios" element={<Usuarios />} />
-          <Route path="/clases" element={<Clases />} />
-          <Route path="/inscripciones" element={<Inscripciones />} />
-          <Route path="/estadisticas" element={<EstadisticasC />}/>
-          <Route path="/configuracion" element={<ConfiguracionC />}/> 
-          <Route path="/perfil" element={<Perfil />}/>
-     <Route path="/consultas" element={<ConsultasC/>}/> 
-          <Route path="/cuotas-pagadas" element={<CuotasPagas/>}/>
-          <Route path="cuotas-pendientes" element={<Pendientes />}/>
-          <Route path="/metas" element={<Metas />}/>
-        <Route path="/alertas" element={<Alertas/>}/> 
-        </Routes>
-      </Router>
+      <UsuariosProvider>
+        <Router>
+          <Routes>
+            <Route path="/admin/usuarios" element={<AdminUsuariosPage />}/>
+            <Route path="/" element={<LoginC />} />
+            <Route path="/inicio" element={<Inicio />} />
+            <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/clases" element={<Clases />} />
+            <Route path="/inscripciones" element={<Inscripciones />} />
+            <Route path="/estadisticas" element={<EstadisticasC />} />
+            <Route path="/configuracion" element={<ConfiguracionC />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/consultas" element={<ConsultasC />} />
+            <Route path="/cuotas-pagadas" element={<CuotasPagas />} />
+            <Route path="cuotas-pendientes" element={<Pendientes />} />
+            <Route path="/metas" element={<Metas />} />
+            <Route path="/alertas" element={<Alertas />} />
+          </Routes>
+        </Router>
+      </UsuariosProvider>
     </>
   );
 }
