@@ -35,8 +35,9 @@ function Planesmp() {
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer APP_USR-4656146995432608-072414-59aced3c614ef1e3905b21e4b2419e3b-2575799057", 
+              "Bearer APP_USR-4656146995432608-072414-59aced3c614ef1e3905b21e4b2419e3b-2575799057",
           },
+
           body: JSON.stringify(preferenceData),
         }
       );
@@ -124,7 +125,10 @@ function Planesmp() {
               <br />
               Entrenamiento personalizado
               <br />
+
+
               
+
               Nutricionista incluido
               <br />
             </Card.Text>
@@ -146,4 +150,7 @@ function Planesmp() {
   );
 }
 
+
 export default Planesmp;
+
+
