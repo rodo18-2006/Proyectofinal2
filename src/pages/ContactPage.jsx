@@ -5,6 +5,7 @@
   import Navbar from "../components/navbar/Navbar";
   import Footer from "../components/footer/Footer";
 
+<<<<<<< HEAD
   export default function ContactPage() {
     const [formData, setFormData] = useState({
       name: "", 
@@ -84,6 +85,79 @@
         ...formData,
         [name]: value,
       });
+=======
+export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) newErrors.name = "El nombre es requerido";
+    if (!formData.email.trim()) newErrors.email = "El email es requerido";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "El email no es válido";
+
+    if (!formData.phone.trim()) newErrors.phone = "El teléfono es requerido";
+    if (!formData.subject.trim()) newErrors.subject = "El asunto es requerido";
+    if (!formData.message.trim()) newErrors.message = "El mensaje es requerido";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setLoading(true);
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+    try {
+      const res = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        console.error("Error al enviar el mensaje");
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
+
+    setLoading(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
 
   
       if (errors[name]) {
