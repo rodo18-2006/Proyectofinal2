@@ -23,14 +23,14 @@ app.use("/api/usuarios", userRoutes);
 const commentRoutes = require("./routes/comment"); // <- plural si tu archivo se llama así
 app.use("/api/comment", commentRoutes);
 
-
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes);
 
 const turnosRouter = require("./routes/turnos");
 app.use("/api/turnos", turnosRouter);
 
-
+const contactRoutes = require("./routes/contact");
+app.use("/api/contact", contactRoutes);
 
 // Ruta simple de prueba
 app.get("/", (req, res) => {
