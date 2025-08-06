@@ -5,19 +5,30 @@ import { Link } from "react-router-dom";
 
 export default function NotFoundPage() {
   return (
-    <div className="min-vh-100 bg-dark text-white d-flex align-items-center">
+    <div className="min-vh-100 bg-black text-white d-flex align-items-center justify-content-center">
       <Container>
-        <Row className="text-center">
-          <Col>
-            <div className="mb-5">
-              <h1 className="display-1 fw-bold text-warning mb-4">404</h1>
-              <h2 className="display-4 fw-bold mb-4">Página No Encontrada</h2>
-              <p className="lead fs-4 text-light mb-5">
-                Lo sentimos, la página que estás buscando no existe o ha sido
-                movida. Pero no te preocupes, puedes volver al inicio y
-                continuar explorando.
-              </p>
+        <Row className="justify-content-center text-center">
+          <Col md={8}>
+            {/* Ícono o GIF opcional */}
+            <div className="mb-4">
+              <img
+                src="https://media.tenor.com/WJrxtr--PCUAAAAj/workout-gym.gif" // Podés reemplazar por un GIF con fondo transparente
+                alt="Gym fail"
+                style={{ width: "250px", borderRadius: "12px" }}
+              />
             </div>
+
+            <h1 className="display-1 fw-bold text-danger mb-3">404</h1>
+            <h2 className="fw-bold mb-3 text-warning">
+              ¡Oops! Te saliste de la rutina
+            </h2>
+
+            <p className="fs-5 text-light mb-4">
+              Esta página no levantó suficiente peso y colapsó. <br />
+              Quizás hiciste demasiadas repeticiones de "clicks" 😅
+            </p>
+
+            
 
             <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
               <Button
@@ -25,29 +36,31 @@ export default function NotFoundPage() {
                 to="/"
                 variant="warning"
                 size="lg"
-                className="px-5 py-3 fs-5"
+                className="px-4 py-2 fw-semibold"
               >
-                🏠 Volver al Inicio
+                🏠 Volver al Gimnasio
               </Button>
+
               <Button
                 variant="outline-light"
                 size="lg"
-                className="px-5 py-3 fs-5"
+                className="px-4 py-2 fw-semibold"
                 onClick={() => window.history.back()}
               >
-                ← Página Anterior
+                ← Ir Atrás
               </Button>
             </div>
 
             <div className="mt-5">
               <p className="text-muted">
-                ¿Necesitas ayuda?{" "}
+                
                 <Link
                   to="/contact"
                   className="text-warning text-decoration-none"
                 >
-                  Contactanos
-                </Link>
+                  Contactanos por cualquier consulta
+                </Link>{" "}
+                
               </p>
             </div>
           </Col>

@@ -6,9 +6,9 @@ import Footer from '../components/footer/Footer'
 const ClasesC = () => {
   return (
     <>
-    <Navbar />
+
     <Clases />
-    <Footer />
+ 
     </>
   )
 }

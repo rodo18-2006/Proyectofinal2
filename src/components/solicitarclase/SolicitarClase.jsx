@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import "./SolicitarClase.css";
 
@@ -44,7 +44,6 @@ export default function SolicitarClase() {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
@@ -74,6 +73,7 @@ export default function SolicitarClase() {
       const data = await res.json();
 
       if (!res.ok) {
+        // Captura mensaje personalizado del backend (como el de 10 personas)
         setError(data.mensaje || "Error al reservar la clase");
         return;
       }

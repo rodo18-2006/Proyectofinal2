@@ -2,51 +2,45 @@ const express = require("express");
 const router = express.Router();
 const Turno = require("../models/Turnos");
 
-// Obtener todos los turnos (opcional para administración o historial)
-router.get("/", async (req, res) => {
-  try {
-    const turnos = await Turno.find().populate("usuarioId", "nombre email");
-    res.json(turnos);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al obtener turnos" });
-  }
-});
-
-// Reservar turno
+// POST /api/turnos/reservar
 router.post("/reservar", async (req, res) => {
   try {
     const { usuarioId, clase, entrenador, fecha, horario } = req.body;
 
-    // Validar campos
     if (!usuarioId || !clase || !entrenador || !fecha || !horario) {
-      return res.status(400).json({ mensaje: "Faltan datos obligatorios" });
+      return res
+        .status(400)
+        .json({ mensaje: "Todos los campos son obligatorios" });
     }
 
-    
+    // Validar horario y fecha (opcionalmente también se puede repetir la lógica del frontend aquí)
+    const [hora, minutos] = horario.split(":");
+    const fechaHora = new Date(`${fecha}T${hora}:${minutos}`);
     const ahora = new Date();
-    const fechaHoraSeleccionada = new Date(`${fecha}T${horario}:00`);
-    if (fechaHoraSeleccionada < ahora) {
+
+    if (fechaHora < ahora) {
       return res
         .status(400)
-        .json({ mensaje: "No se puede reservar un turno pasado" });
+        .json({ mensaje: "No puedes reservar en el pasado" });
     }
 
-    const LIMITE_CUPOS = 10;
-
-    // Contar reservas existentes para esa clase, fecha y horario
-    const reservasExistentes = await Turno.countDocuments({
-      clase,
-      fecha,
-      horario,
-    });
-
-    if (reservasExistentes >= LIMITE_CUPOS) {
+    if (parseInt(hora) < 8 || parseInt(hora) >= 22) {
       return res
         .status(400)
-        .json({ mensaje: "No quedan cupos disponibles para ese horario" });
+        .json({ mensaje: "El horario debe estar entre las 08:00 y 21:59" });
     }
 
-    // Crear reserva
+    // Comprobar si ya hay una reserva en ese horario con ese entrenador
+    const existe = await Turno.findOne({ entrenador, fecha, horario });
+    if (existe) {
+      return res
+        .status(400)
+        .json({
+          mensaje: "Ya hay una clase reservada con ese entrenador a esa hora",
+        });
+    }
+
+    // Crear y guardar el turno
     const nuevoTurno = new Turno({
       usuarioId,
       clase,
@@ -54,15 +48,12 @@ router.post("/reservar", async (req, res) => {
       fecha,
       horario,
     });
-
     await nuevoTurno.save();
 
-    res
-      .status(201)
-      .json({ mensaje: "Turno reservado con éxito", turno: nuevoTurno });
+    res.json({ mensaje: "Clase reservada con éxito" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: "Error en el servidor" });
+    res.status(500).json({ mensaje: "Error del servidor" });
   }
 });
 

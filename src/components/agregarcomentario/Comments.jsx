@@ -16,9 +16,7 @@ export default function CommentsForm({ onNewComment }) {
       rating: parseInt(newRating),
     };
 
-<<<<<<< HEAD
 
-=======
     fetch("http://localhost:5000/api/comment", {
       method: "POST",
       headers: { "Content-Type": "aplication/json" },
@@ -35,7 +33,7 @@ export default function CommentsForm({ onNewComment }) {
 
       .catch((err) => console.error("Error al enviar comentario:", err));
   };
->>>>>>> a42c2b7a37e1dd14c69bd0b61cc040046a4a6d11
+
 
   return (
     <section className="form-container">

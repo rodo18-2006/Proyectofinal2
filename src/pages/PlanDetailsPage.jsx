@@ -86,7 +86,7 @@ export default function PlanDetailsPage() {
   if (!plan) {
     return (
       <div className="min-vh-100">
-        <Navbar />
+       
         <Container className="py-5">
           <Row className="text-center">
             <Col>
@@ -217,7 +217,6 @@ export default function PlanDetailsPage() {
         </Container>
       </section>
 
-      <Footer />
     </div>
   );
 }

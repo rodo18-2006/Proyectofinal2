@@ -38,7 +38,7 @@ const teamMembers = [
 export default function AboutPage() {
   return (
     <div className="min-vh-100">
-      <Navbar />
+    
 
       {/*  <section className="py-5">
         <Container>
@@ -243,7 +243,7 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <Footer />
+ 
     </div>
   );
 }

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Container, Table } from "react-bootstrap";
 
 export default function CuotasPagadas() {
-  // Datos estáticos provisionales
   const cuotasEjemplo = [
     { id: 1, usuario: "Juan Pérez", fechaPago: "2025-06-01", monto: 25000 },
     { id: 2, usuario: "Ana Romero", fechaPago: "2025-06-05", monto: 30000 },

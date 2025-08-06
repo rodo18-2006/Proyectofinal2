@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Usuario = require("../models/Usuarios");
-const enviarCorreoBienvenida = require("../utils/mailer"); // importación del mailer
+const enviarCorreoBienvenida = require("../utils/mailer");
 const crypto = require("crypto");
 
 // Registro de usuario

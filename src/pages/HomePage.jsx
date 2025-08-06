@@ -69,7 +69,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
+   
       <Hero />
       <Weather />
       <Services />
@@ -83,7 +83,7 @@ export default function HomePage() {
         onPageChange={handlePageChange}
       />
 
-      <Footer />
+
     </div>
   );
 }

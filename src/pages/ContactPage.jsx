@@ -437,7 +437,7 @@ export default function ContactPage() {
 
     return (
       <div className="min-vh-100">
-        <Navbar />
+   
 
         <section className="py-5">
           <Container>
@@ -613,8 +613,6 @@ export default function ContactPage() {
             </Row>
           </Container>
         </section>
-
-        <Footer />
       </div>
     );
   }
