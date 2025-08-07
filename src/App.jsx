@@ -14,12 +14,14 @@ import { UsuariosProvider } from "./components/context/UsuariosContext"; // <---
 import Planes from "./pages/Planes";
 import Clases from "./components/clases/Clases";
 import SolicitarClasesC from "./pages/SolicitarClasesC";
+import ScrollTopButton from "./components/ScrollTopButton/ScrollTopButton";
 
 function App() {
   return (
     <UsuariosProvider>
       {" "}
       {/* <--- Agregá esto */}
+      <ScrollTopButton/>
       <Router>
         <div className="App">
           <Routes>

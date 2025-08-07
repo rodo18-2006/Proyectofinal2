@@ -8,7 +8,6 @@ import Services from "../components/services/Sevices";
 import Testimonials from "../components/testimonials/Testimonials";
 import Trainers from "../components/trainers/Trainers";
 import Weather from "../components/weather/Weather";
-import Paginacion from "../components/paginacion/Paginacion";
 
 import ComentariosContainer from "../components/comentarioscontainer/ComentariosContainer";
 
