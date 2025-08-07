@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CommentsForm from "../agregarcomentario/Comments";
 import Testimonials from "../testimonials/Testimonials";
+import Paginacion from "../paginacion/Paginacion.jsx";
 
 export default function ComentariosContainer() {
   const itemsPorPagina = 3;
@@ -32,14 +33,12 @@ export default function ComentariosContainer() {
       <Testimonials data={comentariosPagina} />
 
       {/* Paginación */}
+      <Paginacion
+        itemsPerPage={itemsPorPagina}
+        totalItems={comments.length}
+        onPageChange={setPaginaActual}
+      />
     </>
   );
 }
-
-
-
-
-
-
-    
 
