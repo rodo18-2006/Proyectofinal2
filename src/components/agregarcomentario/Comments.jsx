@@ -19,7 +19,7 @@ export default function CommentsForm({ onNewComment }) {
 
     fetch("http://localhost:5000/api/comment", {
       method: "POST",
-      headers: { "Content-Type": "aplication/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(nuevoComentario),
     })
       .then((res) => res.json())

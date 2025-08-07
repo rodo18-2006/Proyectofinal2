@@ -60,7 +60,7 @@ function Planesmp() {
 
   return (
     <>
-      <Navbar />
+ 
       <div className="planes-container">
         <Card style={{ width: "18rem" }}>
           <Card.Img variant="top" src="/img/musculacion.jpg" />
@@ -145,7 +145,7 @@ function Planesmp() {
           </Card.Body>
         </Card>
       </div>
-      <Footer />
+
     </>
   );
 }

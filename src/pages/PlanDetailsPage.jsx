@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
-import Navbar from "../components/navbar/Navbar";
-import Footer from "../components/footer/Footer";
+
 
 const planDetails = {
   musculacion: {
@@ -101,7 +100,7 @@ export default function PlanDetailsPage() {
 
   return (
     <div className="min-vh-100">
-      <Navbar />
+
 
       <section className="py-5">
         <Container>

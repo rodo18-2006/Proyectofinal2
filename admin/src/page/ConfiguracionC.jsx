@@ -6,9 +6,9 @@ import AdminFooter from '../components/footer/Footer'
 const ConfiguracionC = () => {
   return (
     <>
-    <Navbar />
+
     <Configuracion />
-    <AdminFooter />
+
     </>
   )
 }

@@ -35,7 +35,8 @@ app.use("/api/contact", contactRoutes);
 
 // ✅ Ruta de pagos (solo una vez)
 const pagosRoutes = require("./routes/pagos");
-app.use("/api/pagos", pagosRoutes);
+app.use("/api/pagados", pagosRoutes);
+
 
 // Ruta simple de prueba
 app.get("/", (req, res) => {

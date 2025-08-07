@@ -797,6 +797,7 @@ export default function LoginModal({ isOpen, onClose }) {
    import { useState } from "react";
    import Swal from "sweetalert2";
    import "./LoginModal.css";
+   
 
    export default function LoginModal({ isOpen, onClose, onLogin }) {
      const [modalView, setModalView] = useState("login");
@@ -913,7 +914,7 @@ export default function LoginModal({ isOpen, onClose }) {
        setLoading(true);
        try {
          const response = await fetch(
-           "http://localhost:5000/api/usuarios/registrar",
+           "http://localhost:5000/api/usuarios/login",
            {
              method: "POST",
              headers: { "Content-Type": "application/json" },
@@ -955,21 +956,88 @@ export default function LoginModal({ isOpen, onClose }) {
        }
      };
 
-     const handleSubmitLogin = async (e) => {
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault();
+    if (!validateLogin()) return;
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/usuarios/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // Verificar tipo de contenido
+      const contentType = res.headers.get("content-type");
+
+      if (!res.ok) {
+        // Si la respuesta no es OK, intentar leer el texto para ver el error
+        let errorMsg = "";
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await res.json();
+          errorMsg =
+            errorData.message || errorData.mensaje || "Error en la respuesta";
+        } else {
+          errorMsg = await res.text();
+        }
+        throw new Error(errorMsg);
+      }
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        // Aquí continua tu lógica con data
+        Swal.fire({ icon: "success", title: "Inicio de sesión exitoso" });
+        sessionStorage.setItem("token", data.token);
+        onLogin(data.user?.role === "admin");
+      } else {
+        // La respuesta no es JSON, mostrar texto o error
+        const text = await res.text();
+        throw new Error("Respuesta inesperada: " + text);
+      }
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+     const handleSubmitRecovery = async (e) => {
        e.preventDefault();
-       if (!validateLogin()) return;
-       setLoading(true);
-       try {
-         const res = await fetch("http://localhost:5000/api/usuarios/login", {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({ email, password }),
+
+       if (!email) {
+         return Swal.fire({
+           icon: "warning",
+           title: "Por favor ingresa un email",
          });
+       }
+
+       setLoading(true);
+
+       try {
+         const res = await fetch(
+           "http://localhost:5000/api/usuarios/recuperar",
+           {
+             method: "POST", // <-- asegurate de que sea POST
+             headers: { "Content-Type": "application/json" },
+             body: JSON.stringify({ email }),
+           }
+         );
+
          const data = await res.json();
-         if (!res.ok) throw new Error(data.msg || "Error al iniciar sesión");
-         Swal.fire({ icon: "success", title: "Inicio de sesión exitoso" });
-         sessionStorage.setItem("token", data.token);
-         onLogin(data.user?.rol === "admin");
+
+         if (!res.ok)
+           throw new Error(data.message || "Error al recuperar contraseña");
+
+         Swal.fire({
+           icon: "success",
+           title: "Revisa tu correo",
+           text: "Se ha enviado una nueva contraseña a tu correo",
+         });
+
+         // podrías limpiar el campo o redirigir si querés
+         setEmail("");
        } catch (err) {
          Swal.fire({ icon: "error", title: "Error", text: err.message });
        } finally {
@@ -977,32 +1045,6 @@ export default function LoginModal({ isOpen, onClose }) {
        }
      };
 
-     const handleRecover = async (e) => {
-       e.preventDefault();
-       if (!validateRecover()) return;
-       setLoading(true);
-       try {
-         await fetch("http://localhost:5000/api/users/recuperar", {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({ email }),
-         });
-         Swal.fire({
-           icon: "success",
-           title: "Enlace enviado",
-           text: "Revisá tu email para recuperar contraseña",
-         });
-         switchView("login");
-       } catch {
-         Swal.fire({
-           icon: "error",
-           title: "Error",
-           text: "No se pudo enviar el enlace",
-         });
-       } finally {
-         setLoading(false);
-       }
-     };
 
      if (!isOpen) return null;
 
@@ -1293,7 +1335,7 @@ export default function LoginModal({ isOpen, onClose }) {
              )}
 
              {modalView === "recover" && (
-               <form onSubmit={handleRecover}>
+               <form onSubmit={handleRecover}>x 
                  <div className="form-group">
                    <label htmlFor="email" className="form-label">
                      Email para recuperación

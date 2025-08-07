@@ -7,9 +7,9 @@ import AdminFooter from '../components/footer/Footer'
 const Usuarios = () => {
   return (
     <>
-    <Navbar />
+
     <UsuariosRegistrados />
-    <AdminFooter/>
+
     </>
   )
 }

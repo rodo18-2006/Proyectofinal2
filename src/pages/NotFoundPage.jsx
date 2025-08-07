@@ -24,7 +24,7 @@ export default function NotFoundPage() {
             </h2>
 
             <p className="fs-5 text-light mb-4">
-              Esta página no levantó suficiente peso y colapsó. <br />
+              Esta página se excedio con el peso y colapsó. <br />
               Quizás hiciste demasiadas repeticiones de "clicks" 😅
             </p>
 

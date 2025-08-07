@@ -71,38 +71,25 @@ export default function AdminInicio({ nombreAdmin }) {
 
           <Link to="/clases" className="admin-card">
             <h3>📅 Clases programadas</h3>
-            <p>12 clases esta semana</p>
+            
           </Link>
 
           <Link to="/inscripciones" className="admin-card">
             <h3>📝 Inscripciones</h3>
-            <p>31 nuevos inscriptos</p>
+          
           </Link>
 
           <Link to="/consultas" className="admin-card">
             <h3>💬 Consultas</h3>
-            <p>8 mensajes sin responder</p>
+           
           </Link>
 
           <Link to="/cuotas-pagadas" className="admin-card">
             <h3>💰 Cuotas pagadas</h3>
-            <p>13 cuotas recibidas este mes</p>
+            
           </Link>
 
-          <Link to="/cuotas-pendientes" className="admin-card">
-            <h3>⚠️ Cuotas pendientes</h3>
-            <p>5 pagos atrasados</p>
-          </Link>
-
-          <Link to="/metas" className="admin-card">
-            <h3>📊 Cumplimiento de metas</h3>
-            <p>75% de asistencia mensual</p>
-          </Link>
-
-          <Link to="/alertas" className="admin-card alert-card">
-            <h3>🚨 Alertas importantes</h3>
-            <p>3 membresías a punto de expirar</p>
-          </Link>
+        
         </div>
       </div>
     </section>

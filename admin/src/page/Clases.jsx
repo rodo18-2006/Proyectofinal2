@@ -7,9 +7,9 @@ import ClasesC from '../components/clases/ClasesC'
 const Clases = () => {
   return (
     <>
-    <Navbar />
+ 
     <ClasesC />
-    <AdminFooter/>
+
     </>
   )
 }

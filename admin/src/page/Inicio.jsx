@@ -6,9 +6,9 @@ import Footer from "../components/footer/Footer";
 const Inicio = () => {
   return (
     <>
-      <AdminNavbar />
+ 
       <AdminInicio />
-      <Footer />
+
     </>
   );
 };

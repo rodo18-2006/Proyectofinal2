@@ -22,7 +22,7 @@ export default function PerfilAdmin() {
         creado: "2024-01-01",
         ultimaSesion: new Date().toLocaleString(),
         sesiones: 17,
-        foto: "./img/rodo.png",
+        foto: "./img/Rodo.jpeg",
       },
       Sofia: {
         nombre: "Sofía Caldez",
@@ -46,7 +46,7 @@ export default function PerfilAdmin() {
         creado: "2024-03-05",
         ultimaSesion: new Date().toLocaleString(),
         sesiones: 8,
-        foto: "/img/celeste.jpeg",
+        foto: "./img/celeste.jpeg",
       },
       Ignacio: {
         nombre: "Ignacio Teseira",
@@ -58,7 +58,7 @@ export default function PerfilAdmin() {
         creado: "2024-04-15",
         ultimaSesion: new Date().toLocaleString(),
         sesiones: 6,
-        foto: "/img/admins/ignacio.jpg",
+        foto: "./img/nacho.jpeg",
       },
       Mateo: {
         nombre: "Mateo Manzares",
@@ -70,7 +70,7 @@ export default function PerfilAdmin() {
         creado: "2024-05-20",
         ultimaSesion: new Date().toLocaleString(),
         sesiones: 4,
-        foto: "/img/admins/mateo.jpg",
+        foto: "./img/mateo.jpeg",
       },
     };
 

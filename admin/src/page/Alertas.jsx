@@ -6,9 +6,9 @@ import AdminFooter from '../components/footer/Footer'
 const Alertas = () => {
   return (
     <>
-    <Navbar/>
+
     <AlertasImportantes />
-    <AdminFooter />
+ 
     </>
   )
 }
