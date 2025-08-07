@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Usuario = require("../models/Usuarios");
+
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
@@ -8,7 +9,6 @@ const {
   enviarCorreoBienvenida,
   enviarCorreoRecuperacion,
 } = require("../utils/mailer");
-
 
 // Obtener todos los usuarios sin la contraseña
 router.get("/", async (req, res) => {
@@ -103,9 +103,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 });
-
-
-
 
 // Ruta para recuperar contraseña
 router.post("/recuperar", async (req, res) => {

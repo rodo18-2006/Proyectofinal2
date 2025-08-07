@@ -12,3 +12,5 @@ const pagoSchema = new mongoose.Schema({
 module.exports = mongoose.model("Pago", pagoSchema);
 
 
+
+

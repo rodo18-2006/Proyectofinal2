@@ -8,9 +8,9 @@ import Services from "../components/services/Sevices";
 import Testimonials from "../components/testimonials/Testimonials";
 import Trainers from "../components/trainers/Trainers";
 import Weather from "../components/weather/Weather";
-import Paginacion from "../components/paginacion/Paginacion";
 
 import ComentariosContainer from "../components/comentarioscontainer/ComentariosContainer";
+import Paginacion from "../components/paginacion/Paginacion";
 
 export default function HomePage() {
   const [allTestimonials, setAllTestimonials] = useState([
@@ -26,7 +26,6 @@ export default function HomePage() {
       rating: 5,
     },
     { name: "Ana Perez", comment: "Me encantó el servicio.", rating: 4 },
-    { name: "Marcos Cano", comment: "Todo impecable.", rating: 5 },
     { name: "Matias López", comment: "Muy buenos entrenadores.", rating: 5 },
     {
       name: "María González",
@@ -58,31 +57,25 @@ export default function HomePage() {
     indexOfLastItem
   );
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleNewComment = (nuevoComentario) => {
-    setAllTestimonials([nuevoComentario, ...allTestimonials]);
-    setCurrentPage(1);
+  // ✅ Función que faltaba
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
     <div className="min-h-screen bg-black text-white">
-   
       <Hero />
       <Weather />
       <Services />
       <Plans />
       <Trainers />
       <ComentariosContainer data={currentTestimonials} />
-   
+
       <Paginacion
         itemsPerPage={itemsPerPage}
         totalItems={allTestimonials.length}
         onPageChange={handlePageChange}
       />
-
 
     </div>
   );

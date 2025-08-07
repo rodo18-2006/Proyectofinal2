@@ -1,5 +1,6 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
+// Configuración del transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -8,24 +9,25 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const enviarCorreoBienvenida = async (email, nombre) => {
+// Enviar correo de bienvenida
+export const enviarCorreoBienvenida = async (email, nombre) => {
   try {
-    return await transporter.sendMail({
-      from: '"FitGym 💪" <fitgymgimnasio2024@gmail.com>',
+    await transporter.sendMail({
+      from: `"FitGym 💪" <${process.env.CORREO_GMAIL}>`,
       to: email,
       subject: "¡Bienvenido a FitGym!",
       html: `<p>Hola ${nombre},</p><p>¡Gracias por registrarte en FitGym! 💪</p><p>Ya podés disfrutar de nuestros servicios.</p>`,
     });
   } catch (error) {
-    console.error("Error al enviar correo:", error);
+    console.error("Error al enviar correo de bienvenida:", error);
   }
 };
 
-
-const enviarCorreoRecuperacion = async (email, nuevaContraseña) => {
+// Enviar correo de recuperación de contraseña
+export const enviarCorreoRecuperacion = async (email, nuevaContraseña) => {
   try {
     await transporter.sendMail({
-      from: '"FitGym 💪" <' + process.env.CORREO_GMAIL + ">",
+      from: `"FitGym 💪" <${process.env.CORREO_GMAIL}>`,
       to: email,
       subject: "Recuperación de Contraseña",
       html: `<h2>Hola,</h2><p>Tu nueva contraseña temporal es: <b>${nuevaContraseña}</b><br>Te recomendamos cambiarla después de iniciar sesión.</p>`,
@@ -35,6 +37,3 @@ const enviarCorreoRecuperacion = async (email, nuevaContraseña) => {
     console.error("Error al enviar correo de recuperación:", error);
   }
 };
-
-
-module.exports = { enviarCorreoBienvenida, enviarCorreoRecuperacion };

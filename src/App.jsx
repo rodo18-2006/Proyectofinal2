@@ -16,6 +16,7 @@ import ClasesC from "./pages/clasesC";
 import Cuenta from "./pages/Cuenta";
 import Planes from "./pages/Planes";
 import SolicitarClasesC from "./pages/SolicitarClasesC";
+import ScrollTopButton from "./components/ScrollTopButton/ScrollTopButton";
 
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
@@ -69,6 +70,11 @@ function AppRoutes() {
 function App() {
   return (
     <UsuariosProvider>
+
+      {" "}
+      {/* <--- Agregá esto */}
+      <ScrollTopButton/>
+
       <Router>
         <div className="App d-flex flex-column min-vh-100">
           <Navbar />
@@ -81,5 +87,31 @@ function App() {
     </UsuariosProvider>
   );
 }
+
+
+/* import "./App.css";
+import Planes from "./pages/Planes";
+import  ScrollToTopButton from "./components/ScrollToTopButton/ScrollToTopButton";
+
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+       <ScrollToTopButton /> 
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/plan-details/:planId" element={<PlanDetailsPage />} />
+          <Route path="/pagar" element={<Planes />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </div>
+    </Router>
+
+  );
+} */
+
 
 export default App;

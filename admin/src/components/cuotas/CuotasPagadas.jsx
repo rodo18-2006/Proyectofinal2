@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* import React, { useState } from "react";
 import { Container, Table } from "react-bootstrap";
 
@@ -17,8 +18,23 @@ export default function CuotasPagadas() {
     { id: 12, usuario: "Ana Rodríguez", fechaPago: "2025-06-26", monto: 30000 },
     { id: 13, usuario: "Miguel Torres", fechaPago: "2025-06-28", monto: 30000 },
   ];
+=======
+import React, { useState, useEffect } from "react";
+import { Container, Table } from "react-bootstrap";
 
-  const [cuotas, setCuotas] = useState(cuotasEjemplo);
+export default function CuotasPagadas() {
+  const [cuotas, setCuotas] = useState([]);
+>>>>>>> d33efbff8ce9da15fe6a06c9e709438eae50e2cf
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/pagados")
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al cargar cuotas");
+        return res.json();
+      })
+      .then((data) => setCuotas(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <Container className="mt-4">
@@ -33,11 +49,11 @@ export default function CuotasPagadas() {
           </tr>
         </thead>
         <tbody>
-          {cuotas.map((cuota) => (
-            <tr key={cuota.id}>
-              <td>{cuota.id}</td>
+          {cuotas.map((cuota, index) => (
+            <tr key={cuota._id || index}>
+              <td>{index + 1}</td>
               <td>{cuota.usuario}</td>
-              <td>{cuota.fechaPago}</td>
+              <td>{new Date(cuota.fechaPago).toLocaleDateString("es-AR")}</td>
               <td>${cuota.monto.toLocaleString("es-AR")}</td>
             </tr>
           ))}
@@ -45,6 +61,7 @@ export default function CuotasPagadas() {
       </Table>
     </Container>
   );
+<<<<<<< HEAD
 }
  */
 
@@ -91,3 +108,6 @@ export default function CuotasPagadas() {
     </Container>
   );
 }
+=======
+}
+>>>>>>> d33efbff8ce9da15fe6a06c9e709438eae50e2cf
