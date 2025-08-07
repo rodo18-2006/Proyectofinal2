@@ -1,66 +1,144 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const Usuario = require("../models/Usuario");
-
 const router = express.Router();
+const Usuario = require("../models/Usuarios");
+const {
+  enviarCorreoBienvenida,
+  enviarCorreoRecuperacion,
+} = require("../utils/mailer");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
-// Registro
+
+
+// Obtener todos los usuarios sin la contraseña
+router.get("/", async (req, res) => {
+  try {
+    const usuarios = await Usuario.find({}, "-contraseña"); // Excluye la contraseña
+    res.status(200).json(usuarios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error al obtener usuarios" });
+  }
+});
+
+// Registro de usuario
 router.post("/registrar", async (req, res) => {
   try {
-    const { nombre, apellido, telefono, dni, email, contraseña, plan } = req.body;
+    const { nombre, email, contraseña } = req.body;
 
-    const usuarioExistente = await Usuario.findOne({ email });
-    if (usuarioExistente) {
-      return res.status(400).json({ mensaje: "El email ya está registrado" });
+    const existe = await Usuario.findOne({ email });
+    if (existe) {
+      return res.status(400).json({ mensaje: "El usuario ya existe" });
     }
 
-    const hashedPass = await bcrypt.hash(contraseña, 10);
+    const rol = email === "admin@fitgym.com" ? "admin" : "usuario";
+
+    // Hashear la contraseña antes de guardar
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(contraseña, salt);
 
     const nuevoUsuario = new Usuario({
       nombre,
-      apellido,
-      telefono,
-      dni,
       email,
-      contraseña: hashedPass,
-      plan,
+      contraseña: hashedPassword,
+      rol,
     });
-
     await nuevoUsuario.save();
 
-    res.status(201).json({ mensaje: "Usuario registrado con éxito" });
-  } catch (err) {
-    res.status(500).json({ mensaje: "Error del servidor" });
+    // Enviar correo de bienvenida
+    await enviarCorreoBienvenida(email, nombre);
+
+    const usuarioResponse = {
+      id: nuevoUsuario._id,
+      nombre: nuevoUsuario.nombre,
+      email: nuevoUsuario.email,
+      rol: nuevoUsuario.rol,
+    };
+
+    res.status(201).json({
+      mensaje: "Usuario registrado correctamente",
+      usuario: usuarioResponse,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error en el servidor" });
   }
 });
 
-// Login
 router.post("/login", async (req, res) => {
   try {
-    const { email, contraseña } = req.body;
-    const usuario = await Usuario.findOne({ email });
+    const { email, password } = req.body;
 
-    if (!usuario) return res.status(400).json({ mensaje: "Usuario no encontrado" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Faltan email o contraseña" });
+    }
 
-    const passwordValida = await bcrypt.compare(contraseña, usuario.contraseña);
-    if (!passwordValida) return res.status(400).json({ mensaje: "Contraseña incorrecta" });
+    const user = await Usuario.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Usuario no encontrado" });
+    }
 
-    res.json({ mensaje: "Login exitoso", usuario });
-  } catch (err) {
-    res.status(500).json({ mensaje: "Error del servidor" });
+    console.log("Contraseña almacenada:", user.contraseña);
+
+    // Opcional: chequeo rápido si parece hash bcrypt
+    const esHash = user.contraseña.startsWith("$2");
+    console.log("¿Es hash bcrypt?", esHash);
+
+    const isMatch = await bcrypt.compare(password, user.contraseña);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
+    }
+
+    // Login correcto
+    const usuarioResponse = {
+      id: user._id,
+      nombre: user.nombre,
+      email: user.email,
+      rol: user.rol,
+    };
+
+    res.json({ mensaje: "Login exitoso", usuario: usuarioResponse });
+  } catch (error) {
+    console.error("Error en /login:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 });
 
-// Recuperar contraseña (simulada)
+
+
+
+// Ruta para recuperar contraseña
 router.post("/recuperar", async (req, res) => {
-  const { email } = req.body;
-  const usuario = await Usuario.findOne({ email });
+  try {
+    const { email } = req.body;
+    if (!email)
+      return res.status(400).json({ mensaje: "El email es requerido" });
 
-  if (!usuario) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
 
-  // Aquí normalmente se enviaría un email de recuperación.
-  // Por simplicidad, se responde directamente:
-  res.json({ mensaje: "Instrucciones de recuperación enviadas al correo" });
+    // Generar nueva contraseña aleatoria de 8 caracteres
+    const nuevaContraseña = crypto.randomBytes(4).toString("hex");
+
+    // Hashear la nueva contraseña antes de guardar
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(nuevaContraseña, salt);
+
+    usuario.contraseña = hashedPassword;
+    await usuario.save();
+
+    // Enviar mail con la nueva contraseña en texto plano (para que el usuario la reciba)
+    await enviarCorreoRecuperacion(email, nuevaContraseña);
+
+    res
+      .status(200)
+      .json({ mensaje: "Se envió un correo con la nueva contraseña" });
+  } catch (error) {
+    console.error("Error en /recuperar:", error);
+    res.status(500).json({ mensaje: "Error en el servidor" });
+  }
 });
 
 module.exports = router;

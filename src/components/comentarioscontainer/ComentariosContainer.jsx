@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import CommentsForm from "../agregarcomentario/Comments";
 import Testimonials from "../testimonials/Testimonials";
+import Paginacion from "../paginacion/Paginacion";
 
 export default function ComentariosContainer() {
+  const itemsPorPagina = 3;
   const [comments, setComments] = useState([]);
+  const [paginaActual, setPaginaActual] = useState(1);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/comment")
@@ -14,12 +17,27 @@ export default function ComentariosContainer() {
 
   const handleNewComment = (nuevoComentario) => {
     setComments((prev) => [nuevoComentario, ...prev]);
+    setPaginaActual(1);
   };
+
+  const indexUltimoComentario = paginaActual * itemsPorPagina;
+  const indexPrimerComentario = indexUltimoComentario - itemsPorPagina;
+  const comentariosPagina = comments.slice(indexPrimerComentario, indexUltimoComentario);
 
   return (
     <>
+      {/* Formulario para agregar comentario */}
       <CommentsForm onNewComment={handleNewComment} />
-      <Testimonials data={comments} />
+
+      {/* Lista de comentarios paginados */}
+      <Testimonials data={comentariosPagina} />
+
+      {/* Paginación */}
+      <Paginacion
+        itemsPerPage={itemsPorPagina}
+        totalItems={comments.length}
+        onPageChange={setPaginaActual}
+      />
     </>
   );
 }

@@ -111,20 +111,28 @@ if (!password2.trim()) {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/api/users/register", {
+      const response = await fetch("http://localhost:5000/api/usuarios/registrar", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ nombre, apellido, telefono, dni, email, password, plan })
+        body: JSON.stringify({ nombre, apellido, telefono, dni, email, contraseña: password, plan })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.msg || "Error al registrar usuario");
-      Swal.fire({ icon: "success", title: "Registro exitoso", text: "Ya podés iniciar sesión" });
-      switchView("login");
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "Error", text: err.message });
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error(data.mensaje || "Error en el registro");
     }
+    // Guardar token y usuario
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("usuario", JSON.stringify(data.usuario));
+    onLogin(data.usuario);
+    await Swal.fire({ icon: "success", title: "Registro exitoso", text: "¡Bienvenido!" });
+    switchView("login");
+    console.log("Vista cambiada a login");
+  } catch (error) {
+    await Swal.fire({ icon: "error", title: "Error", text: error.message });
+    setErrors({ general: error.message });
+  } finally {
+    setLoading(false);
+  }
   };
 
   const handleSubmitLogin = async (e) => {
@@ -132,7 +140,7 @@ if (!password2.trim()) {
     if (!validateLogin()) return;
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3001/api/users/login", {
+      const res = await fetch("http://localhost:5000/api/usuarios/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ email, password })
@@ -154,7 +162,7 @@ if (!password2.trim()) {
     if (!validateRecover()) return;
     setLoading(true);
     try {
-      await fetch("http://localhost:3001/api/users/recover", {
+      await fetch("http://localhost:5000/api/users/recuperar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })

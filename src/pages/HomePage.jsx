@@ -58,14 +58,6 @@ export default function HomePage() {
     indexOfLastItem
   );
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleNewComment = (nuevoComentario) => {
-    setAllTestimonials([nuevoComentario, ...allTestimonials]);
-    setCurrentPage(1);
-  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -76,13 +68,6 @@ export default function HomePage() {
       <Plans />
       <Trainers />
       <ComentariosContainer data={currentTestimonials} />
-   
-      <Paginacion
-        itemsPerPage={itemsPerPage}
-        totalItems={allTestimonials.length}
-        onPageChange={handlePageChange}
-      />
-
       <Footer />
     </div>
   );

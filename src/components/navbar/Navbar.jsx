@@ -181,34 +181,34 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const logged = localStorage.getItem("isLoggedIn") === "true";
-    const admin = localStorage.getItem("isAdmin") === "true";
-    const nombre = localStorage.getItem("nombreUsuario");
-    setIsLoggedIn(logged);
-    setIsAdmin(admin);
-    setNombreUsuario(nombre || "");
-  }, []);
+  const logged = localStorage.getItem("isLoggedIn") === "true";
+  const admin = localStorage.getItem("isAdmin") === "true";
+  const nombre = localStorage.getItem("nombreUsuario");
+  setIsLoggedIn(logged);
+  setIsAdmin(admin);
+  setNombreUsuario(nombre || "");
+}, []);
 
-  const handleLogin = (isAdminUser) => {
-    setIsLoggedIn(true);
-    setIsAdmin(isAdminUser);
-    const nombre = localStorage.getItem("nombreUsuario");
-    setNombreUsuario(nombre || "");
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("isAdmin", isAdminUser ? "true" : "false");
-    setShowLogin(false);
-  };
+  const handleLogin = (isAdminUser, nombre) => {
+  setIsLoggedIn(true);
+  setIsAdmin(isAdminUser);
+  setNombreUsuario(nombre);
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("isAdmin", isAdminUser ? "true" : "false");
+  localStorage.setItem("nombreUsuario", nombre);
+  setShowLogin(false);
+};
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    setNombreUsuario("");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("nombreUsuario");
-    localStorage.removeItem("rol");
-    setIsMenuOpen(false);
-  };
+ const handleLogout = () => {
+  setIsLoggedIn(false);
+  setIsAdmin(false);
+  setNombreUsuario("");
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("isAdmin");
+  localStorage.removeItem("nombreUsuario");
+  setIsMenuOpen(false);
+};
+
 
   return (
     <>
