@@ -1,15 +1,11 @@
-import { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Navbar from "./components/navbar/Navbar";
-import LoginC from "./components/login/LoginC";
+import AdminFooter from "./components/footer/Footer";
 
+import LoginC from "./components/login/LoginC";
 import Inicio from "./page/inicio";
 import Usuarios from "./page/Usuarios";
 import Clases from "./page/Clases";
@@ -23,16 +19,13 @@ import Pendientes from "./page/Pendientes";
 import Metas from "./page/Metas";
 import Alertas from "./page/Alertas";
 import AdminUsuariosPage from "./page/AdminUsuariosPage";
-import { UsuariosProvider } from "../src/components/context/UsuariosContext";
-import AdminFooter from "./components/footer/Footer";
 
-// 👇 Esta función es para actualizar el título según la ruta
+import { UsuariosProvider } from "./components/context/UsuariosContext";
+
 function usePageTitle() {
   const location = useLocation();
 
   useEffect(() => {
-    const path = location.pathname;
-
     const titles = {
       "/": "Login | FitGym 💪",
       "/inicio": "Inicio | FitGym 💪",
@@ -50,22 +43,20 @@ function usePageTitle() {
       "/admin/usuarios": "Administrar Usuarios | FitGym 💪",
     };
 
-    document.title = titles[path] || "FitGym 💪";
+    document.title = titles[location.pathname] || "FitGym 💪";
   }, [location]);
 }
 
-// 👇 Separás las rutas en un componente donde podés usar la función del título
 function AppRoutes() {
   usePageTitle();
 
   return (
     <Routes>
-      <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
+      <Route path="/" element={<LoginC />} />
       <Route path="/inicio" element={<Inicio />} />
       <Route path="/usuarios" element={<Usuarios />} />
-      <Route path="/" element={<LoginC />} />
       <Route path="/clases" element={<Clases />} />
-      <Route path="/inscripciones" element={<Inscripciones />} />
+      <Route path="/turnos-solicitados" element={<Inscripciones />} />
       <Route path="/estadisticas" element={<EstadisticasC />} />
       <Route path="/configuracion" element={<ConfiguracionC />} />
       <Route path="/perfil" element={<Perfil />} />
@@ -74,24 +65,26 @@ function AppRoutes() {
       <Route path="/cuotas-pendientes" element={<Pendientes />} />
       <Route path="/metas" element={<Metas />} />
       <Route path="/alertas" element={<Alertas />} />
+      <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
     </Routes>
   );
 }
 
-function App() {
+export default function App() {
+  const location = useLocation();
+
+  // Mostrar navbar y footer excepto en login (/)
+  const mostrarNavFooter = location.pathname !== "/";
+
   return (
     <UsuariosProvider>
-      <Router>
-        <div className="App d-flex flex-column min-vh-100">
-          <Navbar />
-          <div className="flex-grow-1">
-            <AppRoutes /> {/* 👈 aquí usás las rutas con títulos dinámicos */}
-          </div>
-          <AdminFooter />
-        </div>
-      </Router>
+      <div className="App d-flex flex-column min-vh-100">
+        {mostrarNavFooter && <Navbar />}
+        <main className="flex-grow-1">
+          <AppRoutes />
+        </main>
+        {mostrarNavFooter && <AdminFooter />}
+      </div>
     </UsuariosProvider>
   );
 }
-
-export default App;

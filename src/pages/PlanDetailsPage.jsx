@@ -64,16 +64,37 @@ export default function PlanDetailsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   setLoading(true);
 
-    // Simulación de envío de formulario
-    setTimeout(() => {
-      setSubmitted(true);
-      setLoading(false);
-    }, 2000);
-  };
+   try {
+     const response = await fetch("http://localhost:5000/api/contact", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({
+         name: formData.name,
+         email: formData.email,
+         phone: formData.phone,
+         message: `Consulta por el plan: ${plan.name}. Mensaje: ${formData.message}`,
+       }),
+     });
+
+     if (response.ok) {
+       setSubmitted(true);
+     } else {
+       const data = await response.json();
+       console.error("Error al enviar:", data);
+       alert("Hubo un error al enviar tu consulta.");
+     }
+   } catch (error) {
+     console.error("Error de red:", error);
+     alert("No se pudo conectar al servidor.");
+   } finally {
+     setLoading(false);
+   }
+ };
+
 
   const handleInputChange = (e) => {
     setFormData({

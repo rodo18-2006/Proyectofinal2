@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /* import React, { useState } from "react";
 import { Container, Table } from "react-bootstrap";
 
@@ -24,7 +24,7 @@ import { Container, Table } from "react-bootstrap";
 
 export default function CuotasPagadas() {
   const [cuotas, setCuotas] = useState([]);
->>>>>>> d33efbff8ce9da15fe6a06c9e709438eae50e2cf
+
 
   useEffect(() => {
     fetch("http://localhost:5000/api/pagados")
@@ -61,7 +61,7 @@ export default function CuotasPagadas() {
       </Table>
     </Container>
   );
-<<<<<<< HEAD
+
 }
  */
 
@@ -108,6 +108,6 @@ export default function CuotasPagadas() {
     </Container>
   );
 }
-=======
-}
->>>>>>> d33efbff8ce9da15fe6a06c9e709438eae50e2cf
+
+
+

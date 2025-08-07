@@ -74,8 +74,8 @@ export default function AdminInicio({ nombreAdmin }) {
             
           </Link>
 
-          <Link to="/inscripciones" className="admin-card">
-            <h3>📝 Inscripciones</h3>
+          <Link to="/turnos-solicitados" className="admin-card">
+            <h3>Turnos solicitados</h3>
           
           </Link>
 

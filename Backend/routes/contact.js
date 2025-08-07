@@ -14,6 +14,15 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Error al enviar el mensaje" });
   }
 });
+router.get("/contact", async (req, res) => {
+  try {
+    const mensajes = await Contact.find({ respondido: false });
+    res.json(mensajes);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los mensajes" });
+  }
+});
+
 
 // GET - obtener mensajes
 router.get("/", async (req, res) => {
@@ -25,15 +34,15 @@ router.get("/", async (req, res) => {
   }
 });
 
-// PATCH - marcar mensaje como respondido
-router.patch("/:id/respond", async (req, res) => {
+router.patch("/contact/:id/respond", async (req, res) => {
   try {
     const { id } = req.params;
     await Contact.findByIdAndUpdate(id, { respondido: true });
-    res.json({ message: "Mensaje marcado como respondido" });
-  } catch (error) {
-    res.status(500).json({ message: "Error al actualizar mensaje" });
+    res.status(200).json({ message: "Marcado como respondido" });
+  } catch (err) {
+    res.status(500).json({ error: "Error al actualizar estado" });
   }
 });
+
 
 module.exports = router;

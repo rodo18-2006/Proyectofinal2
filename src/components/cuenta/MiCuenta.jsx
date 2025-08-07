@@ -131,12 +131,15 @@ export default function MiCuenta({ onLogout }) {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(() => {
-    const nombreGuardado = localStorage.getItem("nombreUsuario") || "";
-    const emailGuardado = localStorage.getItem("emailUsuario") || "";
-    setNombre(nombreGuardado);
-    setEmail(emailGuardado);
-  }, []);
+useEffect(() => {
+  const usuarioString = localStorage.getItem("usuario");
+  if (usuarioString) {
+    const usuario = JSON.parse(usuarioString);
+    setNombre(usuario.nombre || "");
+    setEmail(usuario.email || "");
+  }
+}, []);
+
 
   const handleGuardar = (e) => {
     e.preventDefault();

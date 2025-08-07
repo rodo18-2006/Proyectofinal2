@@ -22,46 +22,35 @@ router.get("/", async (req, res) => {
 });
 
 // Registro de usuario
-router.post("/registrar", async (req, res) => {
+router.post("/registro", async (req, res) => {
   try {
-    const { nombre, email, contraseña } = req.body;
+    const { nombre, email, password } = req.body;
 
+    // Verificar si el usuario ya existe
     const existe = await Usuario.findOne({ email });
     if (existe) {
       return res.status(400).json({ mensaje: "El usuario ya existe" });
     }
 
-    const rol = email === "admin@fitgym.com" ? "admin" : "usuario";
+    // Hashear contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Hashear la contraseña antes de guardar
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(contraseña, salt);
-
+    // Crear nuevo usuario
     const nuevoUsuario = new Usuario({
       nombre,
       email,
-      contraseña: hashedPassword,
-      rol,
+      password: hashedPassword,
     });
+
     await nuevoUsuario.save();
 
     // Enviar correo de bienvenida
     await enviarCorreoBienvenida(email, nombre);
 
-    const usuarioResponse = {
-      id: nuevoUsuario._id,
-      nombre: nuevoUsuario.nombre,
-      email: nuevoUsuario.email,
-      rol: nuevoUsuario.rol,
-    };
-
-    res.status(201).json({
-      mensaje: "Usuario registrado correctamente",
-      usuario: usuarioResponse,
-    });
+    res.status(201).json({ mensaje: "Usuario creado correctamente" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensaje: "Error en el servidor" });
+    console.error("Error en el registro:", error);
+    res.status(500).json({ mensaje: "Error al registrar el usuario" });
   }
 });
 
