@@ -27,6 +27,7 @@ function Planesmp() {
     };
 
     try {
+
      const response = await fetch(
        "http://localhost:5000/api/pagados/crear-preferencia",
        {
@@ -41,13 +42,23 @@ function Planesmp() {
       const data = await response.json();
 
       if (data.init_point) {
+
         window.open(data.init_point, "_blank");
+
+        // Abrir MercadoPago
+        window.open(data.init_point, "_blank");
+
+        // Opcional: guardar el pago (si tienes info usuario, adaptá)
 
         await fetch("http://localhost:5000/api/pagos", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+
             usuario: "id-o-nombre-de-usuario",
+
+            usuario: "id-o-nombre-de-usuario", // debes tener esto disponible
+
             nombrePlan: plan.nombre,
             monto: plan.precio,
           }),
@@ -133,7 +144,7 @@ function Planesmp() {
               Nutricionista incluido
               <br />
             </Card.Text>
-            <Card.Text className="tex">$35000</Card.Text>
+            <Card.Text className="tex">$45000</Card.Text>
             <Button
               variant="primary"
               disabled={loading}
@@ -150,4 +161,6 @@ function Planesmp() {
   );
 }
 
+
 export default Planesmp;
+

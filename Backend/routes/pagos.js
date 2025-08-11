@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Pago = require("../models/Pagos");
+
+// Importación correcta y simple de fetch para Node.js 18+ o con node-fetch
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -31,7 +33,6 @@ router.get("/", async (req, res) => {
 router.post("/crear-preferencia", async (req, res) => {
   try {
     const preferenceData = req.body;
-
 
     const response = await fetch(
       "https://api.mercadopago.com/checkout/preferences",
