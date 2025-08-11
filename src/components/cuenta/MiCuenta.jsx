@@ -134,9 +134,15 @@ export default function MiCuenta({ onLogout }) {
 useEffect(() => {
   const usuarioString = localStorage.getItem("usuario");
   if (usuarioString) {
-    const usuario = JSON.parse(usuarioString);
-    setNombre(usuario.nombre || "");
-    setEmail(usuario.email || "");
+    try {
+      const usuario = JSON.parse(usuarioString);
+      setNombre(usuario?.nombre || "");
+      setEmail(usuario?.email || "");
+    } catch (error) {
+      console.error("Error al parsear usuario:", error);
+      // Limpio el valor inválido para evitar que siga fallando
+      localStorage.removeItem("usuario");
+    }
   }
 }, []);
 

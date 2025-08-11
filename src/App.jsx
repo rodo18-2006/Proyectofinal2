@@ -21,6 +21,7 @@ import ScrollTopButton from "./components/ScrollTopButton/ScrollTopButton";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import { UsuariosProvider } from "./components/context/UsuariosContext";
+import RecuperarContrasena from "./components/recuperarcontrasena/RecuparerContrasena";
 
 // 🧠 Hook para actualizar el título de la pestaña
 function usePageTitle() {
@@ -61,6 +62,7 @@ function AppRoutes() {
       <Route path="/cuenta" element={<Cuenta />} />
       <Route path="/pagar" element={<Planes />} />
       <Route path="/solicitar-clase" element={<SolicitarClasesC />} />
+      <Route path="/reset-password" element={<RecuperarContrasena />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

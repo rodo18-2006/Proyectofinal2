@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { UsuariosContext } from "../context/UsuariosContext";
 
 export default function UsuariosRegistrados() {
-  const { usuarios, loading } = useContext(UsuariosContext);
+  const { usuarios, setUsuarios, loading } = useContext(UsuariosContext);
+  const [eliminando, setEliminando] = useState(null);
   const navigate = useNavigate();
 
   const getAvatarByRol = (rol) => {
-    switch (rol.toLowerCase()) {
+    switch (rol?.toLowerCase()) {
       case "socio":
       case "socia":
         return "https://cdn-icons-png.flaticon.com/512/847/847969.png";
@@ -24,7 +25,7 @@ export default function UsuariosRegistrados() {
   };
 
   const getBadgeVariant = (rol) => {
-    switch (rol.toLowerCase()) {
+    switch (rol?.toLowerCase()) {
       case "administrador":
       case "admin":
         return "danger";
@@ -36,6 +37,27 @@ export default function UsuariosRegistrados() {
         return "success";
       default:
         return "secondary";
+    }
+  };
+
+  const handleEliminarUsuario = async (id) => {
+    if (!window.confirm("¿Seguro que quieres eliminar este usuario?")) return;
+
+    setEliminando(id);
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/usuarios/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Error al eliminar usuario");
+
+      setUsuarios((prev) => prev.filter((u) => u._id !== id));
+    } catch (error) {
+      console.error("Error eliminando usuario:", error);
+      alert("No se pudo eliminar el usuario");
+    } finally {
+      setEliminando(null);
     }
   };
 
@@ -55,8 +77,8 @@ export default function UsuariosRegistrados() {
       </div>
 
       <Row>
-        {usuarios.map((usuario, index) => (
-          <Col key={index} xs={12} md={6} lg={4} className="mb-4">
+        {usuarios.map((usuario) => (
+          <Col key={usuario._id} xs={12} md={6} lg={4} className="mb-4">
             <Card className="user-card shadow border-0">
               <Card.Body className="d-flex align-items-center">
                 <img
@@ -77,6 +99,15 @@ export default function UsuariosRegistrados() {
                   <p className="mb-1">{usuario.email}</p>
                   <Badge bg={getBadgeVariant(usuario.rol)}>{usuario.rol}</Badge>
                 </div>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="ms-auto"
+                  disabled={eliminando === usuario._id}
+                  onClick={() => handleEliminarUsuario(usuario._id)}
+                >
+                  {eliminando === usuario._id ? "Eliminando..." : "Eliminar"}
+                </Button>
               </Card.Body>
             </Card>
           </Col>

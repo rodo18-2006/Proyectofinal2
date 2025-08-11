@@ -1,0 +1,72 @@
+.reset-password-container {
+  max-width: 420px;
+  margin: 3rem auto;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  background: #fff7ed; /* color crema clarito */
+  box-shadow: 0 6px 18px rgba(255, 165, 0, 0.3);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  border: 2px solid #ffa500;
+}
+
+.reset-password-container h2 {
+  text-align: center;
+  margin-bottom: 1.8rem;
+  color: #d35400; /* naranja oscuro */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.reset-password-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.reset-password-container label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #d35400;
+}
+
+.reset-password-container input[type="password"] {
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.4rem;
+  border: 2px solid #ffa500;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background-color: #fff8f0;
+}
+
+.reset-password-container input[type="password"]:focus {
+  outline: none;
+  border-color: #e67e22;
+  box-shadow: 0 0 8px #f39c12;
+  background-color: #fff9f2;
+}
+
+.reset-password-container button {
+  background-color: #f39c12; /* naranja */
+  color: white;
+  font-weight: 700;
+  font-size: 1.15rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.35s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.reset-password-container button:disabled {
+  background-color: #f1c40f88;
+  cursor: not-allowed;
+}
+
+.reset-password-container button:hover:not(:disabled) {
+  background-color: #e67e22;
+}

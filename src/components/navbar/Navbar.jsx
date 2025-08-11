@@ -190,15 +190,7 @@ export default function Navbar() {
       setNombreUsuario(nombre || "");
     }, []);
 
-   /*  const handleLogin = (isAdminUser) => {
-      setIsLoggedIn(true);
-      setIsAdmin(isAdminUser);
-      const nombre = localStorage.getItem("nombreUsuario");
-      setNombreUsuario(nombre || "");
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("isAdmin", isAdminUser ? "true" : "false");
-      setShowLogin(false);
-    }; */
+   
 
     const handleLogout = () => {
       setIsLoggedIn(false);
@@ -221,25 +213,17 @@ export default function Navbar() {
 }, []);
 
   const handleLogin = (isAdminUser, nombre) => {
-  setIsLoggedIn(true);
-  setIsAdmin(isAdminUser);
-  setNombreUsuario(nombre);
-  localStorage.setItem("isLoggedIn", "true");
-  localStorage.setItem("isAdmin", isAdminUser ? "true" : "false");
-  localStorage.setItem("nombreUsuario", nombre);
-  setShowLogin(false);
-};
+    setIsLoggedIn(true);
+    setIsAdmin(isAdminUser);
+    setNombreUsuario(nombre);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("isAdmin", isAdminUser ? "true" : "false");
+    localStorage.setItem("nombreUsuario", nombre);
+    setShowLogin(false);
+  };
 
- /* const handleLogout = () => {
-  setIsLoggedIn(false);
-  setIsAdmin(false);
-  setNombreUsuario("");
-  localStorage.removeItem("isLoggedIn");
-  localStorage.removeItem("isAdmin");
-  localStorage.removeItem("nombreUsuario");
-  setIsMenuOpen(false);
-};
- */
+
+
 
 
     return (

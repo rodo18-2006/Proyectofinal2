@@ -39,6 +39,10 @@ const pagosRoutes = require("./routes/pagos");
 app.use("/api/pagados", pagosRoutes);
 
 
+const clasesRoutes = require("./routes/clase");
+app.use("/api/clases", clasesRoutes);
+
+
 // Ruta simple de prueba
 app.get("/", (req, res) => {
   res.send("💪 Backend del gimnasio funcionando!");

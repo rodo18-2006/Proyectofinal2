@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   Card,
   Col,
@@ -10,64 +11,15 @@ import {
 } from "react-bootstrap";
 
 export default function ClasesC() {
-  const [clases, setClases] = useState([
-    {
-      nombre: "Musculación",
-      entrenador: "Carlos Méndez",
-      especialidad: "Entrenador Personal",
-      experiencia: "8 años",
-      horario: "Lunes a Viernes, 9:00 - 20:00",
-    },
-    {
-      nombre: "Funcional",
-      entrenador: "Miguel Torres",
-      especialidad: "Especialista en Funcional",
-      experiencia: "6 años",
-      horario: "Lunes, Miércoles y Viernes, 19:00 - 20:00",
-    },
-    {
-      nombre: "Yoga",
-      entrenador: "Ana Rodríguez",
-      especialidad: "Instructora de Yoga",
-      experiencia: "5 años",
-      horario: "Martes y Jueves, 18:00 - 19:00",
-    },
-    {
-      nombre: "Spinning",
-      entrenador: "Laura Gómez",
-      especialidad: "Instructora de Spinning",
-      experiencia: "4 años",
-      horario: "Lunes a Viernes, 8:00 - 9:00",
-    },
-    {
-      nombre: "HIIT",
-      entrenador: "Carlos Méndez",
-      especialidad: "Entrenador Personal",
-      experiencia: "8 años",
-      horario: "Martes y Jueves, 19:00 - 20:00",
-    },
-    {
-      nombre: "Zumba",
-      entrenador: "Ana Rodríguez",
-      especialidad: "Instructora de Yoga",
-      experiencia: "5 años",
-      horario: "Lunes, Miércoles y Viernes, 17:00 - 18:00",
-    },
-    {
-      nombre: "Pilates",
-      entrenador: "Laura Gómez",
-      especialidad: "Instructora de Spinning",
-      experiencia: "4 años",
-      horario: "Lunes a Sábado, 10:00 - 11:00",
-    },
-    {
-      nombre: "CrossFit",
-      entrenador: "Miguel Torres",
-      especialidad: "Especialista en Funcional",
-      experiencia: "6 años",
-      horario: "Martes, Jueves y Sábados, 7:00 - 8:00",
-    },
-  ]);
+  const [clases, setClases] = useState([]);
+
+  
+  useEffect(() => {
+    fetch("http://localhost:5000/api/clases")
+      .then((res) => res.json())
+      .then((data) => setClases(data))
+      .catch((err) => console.error("Error al cargar clases:", err));
+  }, []);
   const entrenadores = [
     {
       nombre: "Carlos Méndez",
@@ -91,7 +43,6 @@ export default function ClasesC() {
     },
   ];
 
-
   const handleEntrenadorChange = (e) => {
     const selected = entrenadores.find((t) => t.nombre === e.target.value);
     if (selected) {
@@ -105,13 +56,15 @@ export default function ClasesC() {
   };
 
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    nombre: "",
-    entrenador: "",
-    especialidad: "",
-    experiencia: "",
-    horario: "",
-  });
+ const [formData, setFormData] = useState({
+   nombre: "",
+   entrenador: "",
+   especialidad: "",
+   experiencia: "",
+   horario: "",
+   fecha: "", // nuevo
+ });
+
   const [editIndex, setEditIndex] = useState(null);
 
   const handleShowModal = (index = null) => {
@@ -143,18 +96,63 @@ export default function ClasesC() {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (editIndex !== null) {
-      // Editar
-      const nuevasClases = [...clases];
-      nuevasClases[editIndex] = formData;
-      setClases(nuevasClases);
+      // Editar clase
+      const claseEditada = clases[editIndex];
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/clases/${claseEditada._id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          }
+        );
+        const data = await res.json();
+
+        const nuevasClases = [...clases];
+        nuevasClases[editIndex] = data;
+        setClases(nuevasClases);
+      } catch (error) {
+        console.error("Error al editar clase:", error);
+      }
     } else {
-      // Agregar
-      setClases([...clases, formData]);
+      // Agregar clase
+      try {
+        const res = await fetch("http://localhost:5000/api/clases", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        const data = await res.json();
+        setClases([...clases, data]);
+      } catch (error) {
+        console.error("Error al agregar clase:", error);
+      }
     }
-    handleCloseModal();
+    setShowModal(false);
   };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta clase?"))
+      return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/clases/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setClases(clases.filter((clase) => clase._id !== id));
+      } else {
+        console.error("Error al eliminar clase");
+      }
+    } catch (error) {
+      console.error("Error de conexión al eliminar clase:", error);
+    }
+  };
+
 
   return (
     <Container className="my-4">
@@ -173,16 +171,28 @@ export default function ClasesC() {
                 <Card.Subtitle className="mb-1 text-muted">
                   🧑‍🏫 {clase.entrenador} - {clase.especialidad}
                 </Card.Subtitle>
-                <Card.Text className="mb-1">📅 {clase.horario}</Card.Text>
+                <Card.Text className="mb-1">
+                  📆 {new Date(clase.fecha).toLocaleDateString()}
+                </Card.Text>
                 <Card.Text className="text-muted">
                   🔁 {clase.experiencia} de experiencia
                 </Card.Text>
+
                 <Button
                   variant="outline-secondary"
                   size="sm"
                   onClick={() => handleShowModal(index)}
                 >
                   ✏️ Editar
+                </Button>
+
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  className="ms-2"
+                  onClick={() => handleDelete(clase._id)}
+                >
+                  🗑️ Eliminar
                 </Button>
               </Card.Body>
             </Card>
@@ -247,6 +257,15 @@ export default function ClasesC() {
                 type="text"
                 name="horario"
                 value={formData.horario}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formFecha" className="mb-2">
+              <Form.Label>Fecha</Form.Label>
+              <Form.Control
+                type="date"
+                name="fecha"
+                value={formData.fecha ? formData.fecha.split("T")[0] : ""}
                 onChange={handleChange}
               />
             </Form.Group>

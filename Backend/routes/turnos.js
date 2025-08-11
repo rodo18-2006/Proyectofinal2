@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Turno = require("../models/Turnos");
+const Clase = require("../models/Clase"); // Importar modelo Clase para actualizar inscriptos
 
 // POST /api/turnos/reservar
 router.post("/reservar", async (req, res) => {
@@ -13,7 +14,6 @@ router.post("/reservar", async (req, res) => {
         .json({ mensaje: "Todos los campos son obligatorios" });
     }
 
-    // Validar horario y fecha (opcionalmente también se puede repetir la lógica del frontend aquí)
     const [hora, minutos] = horario.split(":");
     const fechaHora = new Date(`${fecha}T${hora}:${minutos}`);
     const ahora = new Date();
@@ -38,32 +38,6 @@ router.post("/reservar", async (req, res) => {
       });
     }
 
-    // GET /api/turnos - Obtener todos los turnos
-    router.get("/", async (req, res) => {
-      try {
-        const turnos = await Turno.find().populate("usuarioId", "nombre email"); // opcional si querés info del usuario
-        res.json(turnos);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ mensaje: "Error al obtener los turnos" });
-      }
-    });
-
-    // DELETE /api/turnos/:id
-    router.delete("/:id", async (req, res) => {
-      try {
-        const { id } = req.params;
-        const eliminado = await Turno.findByIdAndDelete(id);
-        if (!eliminado) {
-          return res.status(404).json({ mensaje: "Turno no encontrado" });
-        }
-        res.json({ mensaje: "Turno eliminado correctamente" });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ mensaje: "Error del servidor" });
-      }
-    });
-
     // Crear y guardar el turno
     const nuevoTurno = new Turno({
       usuarioId,
@@ -74,7 +48,47 @@ router.post("/reservar", async (req, res) => {
     });
     await nuevoTurno.save();
 
+    // Incrementar inscriptos en la clase correspondiente
+    await Clase.findOneAndUpdate(
+      { nombre: clase },
+      { $inc: { inscriptos: 1 } }
+    );
+
     res.json({ mensaje: "Clase reservada con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error del servidor" });
+  }
+});
+
+// GET /api/turnos - Obtener todos los turnos
+router.get("/", async (req, res) => {
+  try {
+    const turnos = await Turno.find();
+    res.json(turnos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error al obtener los turnos" });
+  }
+});
+
+// DELETE /api/turnos/:id
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const turno = await Turno.findById(id);
+    if (!turno) {
+      return res.status(404).json({ mensaje: "Turno no encontrado" });
+    }
+
+    // Disminuir inscriptos en la clase correspondiente
+    await Clase.findOneAndUpdate(
+      { nombre: turno.clase },
+      { $inc: { inscriptos: -1 } }
+    );
+
+    await Turno.findByIdAndDelete(id);
+    res.json({ mensaje: "Turno eliminado correctamente" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: "Error del servidor" });
