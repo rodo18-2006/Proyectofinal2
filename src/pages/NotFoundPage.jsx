@@ -18,7 +18,7 @@ export default function NotFoundPage() {
               />
             </div>
 
-            <h1 className="display-1 fw-bold text-danger mb-3">404</h1>
+            <h1 className="display-1 fw-bold text-warning mb-3">404</h1>
             <h2 className="fw-bold mb-3 text-warning">
               ¡Oops! Te saliste de la rutina
             </h2>

@@ -9,7 +9,7 @@ const Testimonials = ({ data }) => {
             <h2 className="display-4 fw-bold mb-4">
               Lo que dicen nuestros clientes
             </h2>
-            <p className="lead fs-4 text-muted">
+            <p className="lead fs-4 text-light">
               Testimonios reales de personas que han transformado su vida con
               nosotros
             </p>

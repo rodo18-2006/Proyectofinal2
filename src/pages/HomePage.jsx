@@ -71,11 +71,6 @@ export default function HomePage() {
       <Trainers />
       <ComentariosContainer data={currentTestimonials} />
 
-      <Paginacion
-        itemsPerPage={itemsPerPage}
-        totalItems={allTestimonials.length}
-        onPageChange={handlePageChange}
-      />
 
     </div>
   );

@@ -4,7 +4,7 @@
 }
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Esto crea exactamente dos columnas de igual tamaño */
+  grid-template-columns: repeat(2, 1fr); 
   gap: 2rem;
 }
 
@@ -53,3 +53,37 @@
     padding: 2rem 1rem;
   }
 }
+
+
+/* .services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.service-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 280px; 
+  text-align: center;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.service-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.service-description {
+  flex-grow: 1;
+}
+ */

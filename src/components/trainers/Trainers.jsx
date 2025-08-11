@@ -37,7 +37,7 @@ export default function Trainers() {
       <Container>
         <Row className="text-center mb-5">
           <Col>
-            <h2 className="display-4 fw-bold mb-4">Nuestros Entrenadores</h2>
+            <h2 className="display-4 fw-bold mb-4 text-dark">Nuestros Entrenadores</h2>
             <p className="lead fs-4 text-muted">
               Profesionales certificados comprometidos con tu éxito
             </p>
