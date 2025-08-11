@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import "./Planes.css";
-import Navbar from "../navbar/Navbar";
-import Footer from "../footer/Footer";
+
 
 function Planesmp() {
   const [loading, setLoading] = useState(false);
@@ -28,24 +27,34 @@ function Planesmp() {
     };
 
     try {
-      const response = await fetch(
-        "https://api.mercadopago.com/checkout/preferences",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization:
-              "Bearer APP_USR-4656146995432608-072414-59aced3c614ef1e3905b21e4b2419e3b-2575799057",
-          },
-
-          body: JSON.stringify(preferenceData),
-        }
-      );
+      // Llamar a tu backend para crear preferencia
+     const response = await fetch(
+       "http://localhost:5000/api/pagados/crear-preferencia",
+       {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+         },
+         body: JSON.stringify(preferenceData),
+       }
+     );
 
       const data = await response.json();
 
       if (data.init_point) {
-        window.open(data.init_point, "_blank"); // Abre checkout en pestaña nueva
+        // Abrir MercadoPago
+        window.open(data.init_point, "_blank");
+
+        // Opcional: guardar el pago (si tienes info usuario, adaptá)
+        await fetch("http://localhost:5000/api/pagos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            usuario: "id-o-nombre-de-usuario", // debes tener esto disponible
+            nombrePlan: plan.nombre,
+            monto: plan.precio,
+          }),
+        });
       } else {
         alert("Error al crear la preferencia de pago");
         console.error(data);
@@ -60,7 +69,6 @@ function Planesmp() {
 
   return (
     <>
- 
       <div className="planes-container">
         <Card style={{ width: "18rem" }}>
           <Card.Img variant="top" src="/img/musculacion.jpg" />
@@ -125,14 +133,10 @@ function Planesmp() {
               <br />
               Entrenamiento personalizado
               <br />
-
-
-              
-
               Nutricionista incluido
               <br />
             </Card.Text>
-            <Card.Text className="tex">$35000</Card.Text>
+            <Card.Text className="tex">$45000</Card.Text>
             <Button
               variant="primary"
               disabled={loading}
@@ -140,17 +144,13 @@ function Planesmp() {
                 handlePagar({ nombre: "Plan Full", precio: 35000 })
               }
             >
-              {loading ? "Redirigiendo..." : "Pagar"}
+              {loading ? "Cargando..." : "Pagar"}
             </Button>
           </Card.Body>
         </Card>
       </div>
-
     </>
   );
 }
 
-
 export default Planesmp;
-
-
