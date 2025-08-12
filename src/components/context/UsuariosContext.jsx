@@ -1,30 +1,30 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const UsuariosContext = createContext();
 
-export function UsuariosProvider({ children }) {
-  const [usuarios, setUsuarios] = useState([]);
-  const [loading, setLoading] = useState(true);
+export const UsuariosProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const obtenerUsuarios = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/usuarios");
-        const data = await res.json();
-        setUsuarios(data);
-      } catch (error) {
-        console.error("Error al obtener usuarios", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    obtenerUsuarios();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
   return (
-    <UsuariosContext.Provider value={{ usuarios, setUsuarios, loading }}>
+    <UsuariosContext.Provider value={{ user, login, logout }}>
       {children}
     </UsuariosContext.Provider>
   );
-}
+};

@@ -1,4 +1,3 @@
-
 /* import React, { useState } from "react";
 =======
 import React, { useState, useEffect } from "react";
@@ -198,7 +197,6 @@ export default function Consultas() {
   );
 }
  */
-
 
 /* import React, { useState, useEffect } from "react";
 import { Container, Accordion, Button, Form } from "react-bootstrap";
@@ -479,7 +477,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 }
  */
 
-
 import React, { useState, useEffect } from "react";
 import { Container, Accordion, Button, Form } from "react-bootstrap";
 
@@ -490,21 +487,20 @@ export default function Consultas() {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-useEffect(() => {
-  const url = "http://localhost:5000/api/contact/contact";
-  fetch(url)
-    .then((res) => {
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-    })
-    .then((data) => {
-      // Filtrar mensajes no respondidos
-      const noRespondidos = data.filter((m) => !m.respondido);
-      setMensajes(noRespondidos);
-    })
-    .catch((err) => console.error("Error al obtener mensajes:", err));
-}, []);
-
+  useEffect(() => {
+    const url = "http://localhost:5000/api/contact/contact";
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        // Filtrar mensajes no respondidos
+        const noRespondidos = data.filter((m) => !m.respondido);
+        setMensajes(noRespondidos);
+      })
+      .catch((err) => console.error("Error al obtener mensajes:", err));
+  }, []);
 
   const handleRespuestaChange = (id, texto) => {
     setRespuestas((prev) => ({ ...prev, [id]: texto }));
@@ -521,6 +517,8 @@ useEffect(() => {
     try {
       await fetch(`http://localhost:5000/api/contact/contact/${id}/respond`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ respuesta: respuestas[id] }),
       });
 
       setMensajes((prev) => prev.filter((m) => m._id !== id));

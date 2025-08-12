@@ -2,11 +2,12 @@
 
 import { Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Swal from "sweetalert2";
 import "./LoginModal.css";
+import { UsuariosContext } from "../context/UsuariosContext"; 
 
-export default function LoginModal({ isOpen, onClose, onLogin }) {
+export default function LoginModal({ isOpen, onClose }) {
   const [modalView, setModalView] = useState("login");
 
   const [nombre, setNombre] = useState("");
@@ -23,6 +24,8 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
   const [showPassword2, setShowPassword2] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { login } = useContext(UsuariosContext);
 
   const handleClose = () => {
     switchView("login");
@@ -44,6 +47,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
   };
 
   const validateForm = () => {
+   
     const newErrors = {};
     if (!nombre.trim()) {
       newErrors.nombre = "El nombre es requerido";
@@ -113,8 +117,6 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  // --- CORRECCIÓN AQUÍ ---
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -153,32 +155,33 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     }
   };
 
-  // --- CORRECCIÓN AQUÍ ---
- const handleSubmitLogin = async (e) => {
-   e.preventDefault();
-   if (!validateLogin()) return;
-   setLoading(true);
-   try {
-     const res = await fetch("http://localhost:5000/api/usuarios/login", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ email, password }),
-     });
-     const data = await res.json();
-     if (!res.ok) throw new Error(data.mensaje || "Error al iniciar sesión");
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault();
+    if (!validateLogin()) return;
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/usuarios/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.mensaje || "Error al iniciar sesión");
 
-     Swal.fire({ icon: "success", title: "Inicio de sesión exitoso" });
-     localStorage.setItem("token", data.token);
-     localStorage.setItem("usuario", JSON.stringify(data.usuario));
-     onLogin(data.usuario.rol === "admin", data.usuario.nombre); // <-- Acá el cambio
-   } catch (err) {
-     Swal.fire({ icon: "error", title: "Error", text: err.message });
-   } finally {
-     setLoading(false);
-   }
- };
+      Swal.fire({ icon: "success", title: "Inicio de sesión exitoso" });
 
-  // --- CORRECCIÓN AQUÍ ---
+      localStorage.setItem("token", data.token);
+
+      login(data.usuario);
+
+      onClose(); 
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRecover = async (e) => {
     e.preventDefault();
     if (!validateRecover()) return;
@@ -299,7 +302,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 
           {modalView === "register" && (
             <form onSubmit={handleRegister}>
-              {/* Nombre */}
+              
               <div className="form-group">
                 <label htmlFor="nombre" className="form-label">
                   Nombre
@@ -314,7 +317,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <small className="error">{errors.nombre}</small>
                 )}
               </div>
-              {/* Apellido */}
+             
               <div className="form-group">
                 <label htmlFor="apellido" className="form-label">
                   Apellido
@@ -331,7 +334,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <small className="error">{errors.apellido}</small>
                 )}
               </div>
-              {/* Teléfono */}
+              
               <div className="form-group">
                 <label htmlFor="telefeno" className="form-label">
                   Teléfono
@@ -348,7 +351,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <small className="error">{errors.telefono}</small>
                 )}
               </div>
-              {/* DNI */}
+            
               <div className="form-group">
                 <label htmlFor="dni" className="form-label">
                   DNI
@@ -361,7 +364,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                 />
                 {errors.dni && <small className="error">{errors.dni}</small>}
               </div>
-              {/* Email */}
+
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   Email
@@ -376,7 +379,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <small className="error">{errors.email}</small>
                 )}
               </div>
-              {/* Plan */}
+           
               <div className="form-group">
                 <label htmlFor="plan" className="form-label">
                   Plan
@@ -396,7 +399,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                 </Form.Select>
                 {errors.plan && <small className="error">{errors.plan}</small>}
               </div>
-              {/* Contraseña */}
+             
               <div className="form-group">
                 <label htmlFor="contasena" className="form-label">
                   Contraseña
@@ -422,7 +425,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <small className="error">{errors.password}</small>
                 )}
               </div>
-              {/* Repetir Contraseña */}
+              
               <div className="form-group">
                 <label htmlFor="repetir contrasena" className="form-label">
                   Repetir Contraseña
@@ -448,7 +451,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
                   <small className="error">{errors.password2}</small>
                 )}
               </div>
-              {/* Términos */}
+              
               <div className="form-check">
                 <label className="checkbox-label">
                   <input

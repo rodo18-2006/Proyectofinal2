@@ -182,25 +182,31 @@ export default function SolicitarClase() {
 }
  */
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import axios from "axios";
+import { UsuariosContext } from "../context/UsuariosContext";
 
 export default function SolicitarClase() {
+  const { user } = useContext(UsuariosContext); // 👈 Traemos el usuario del contexto
+
   const [clase, setClase] = useState("");
   const [entrenador, setEntrenador] = useState("");
   const [fecha, setFecha] = useState("");
   const [horario, setHorario] = useState("");
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
-
-  // Estado para saber qué campos están vacíos (errores de validación)
   const [errores, setErrores] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar campos vacíos
+    if (!user?._id) {
+      setError("Debes iniciar sesión para solicitar una clase.");
+      return;
+    }
+
+    // Validar campos
     const nuevosErrores = {};
     if (!clase) nuevosErrores.clase = true;
     if (!entrenador) nuevosErrores.entrenador = true;
@@ -209,15 +215,13 @@ export default function SolicitarClase() {
 
     setErrores(nuevosErrores);
 
-    // Si hay algún error, no continuar
     if (Object.keys(nuevosErrores).length > 0) {
       setError("Por favor completa todos los campos obligatorios.");
       setMensaje(null);
       return;
     }
 
-    // ... aquí sigue la lógica de validación de fecha y hora y el fetch
-
+    // Validación de fecha y hora
     const hora = parseInt(horario.split(":")[0]);
     const fechaHora = new Date(`${fecha}T${horario}`);
     const ahora = new Date();
@@ -238,7 +242,7 @@ export default function SolicitarClase() {
       const response = await axios.post(
         "http://localhost:5000/api/turnos/reservar",
         {
-          usuarioId: "usuario-demo",
+          usuarioId: user._id, // 👈 Ahora se usa el ID real
           clase,
           entrenador,
           fecha,
@@ -271,7 +275,7 @@ export default function SolicitarClase() {
         <Form.Group className="mb-3">
           <Form.Label>Clase</Form.Label>
           <Form.Select
-            value={clase} // aquí controlás clase, no entrenador
+            value={clase}
             onChange={(e) => setClase(e.target.value)}
             isInvalid={!!errores.clase}
           >

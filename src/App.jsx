@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,14 +17,17 @@ import ClasesC from "./pages/clasesC";
 import Cuenta from "./pages/Cuenta";
 import Planes from "./pages/Planes";
 import SolicitarClasesC from "./pages/SolicitarClasesC";
+
 import ScrollTopButton from "./components/ScrollTopButton/ScrollTopButton";
-
 import Navbar from "./components/navbar/Navbar";
-import Footer from "./components/footer/Footer";
-import { UsuariosProvider } from "./components/context/UsuariosContext";
-import RecuperarContrasena from "./components/recuperarcontrasena/RecuparerContrasena";
 
-// 🧠 Hook para actualizar el título de la pestaña
+
+import { UsuariosProvider } from "./components/context/UsuariosContext";
+import ProtectedRoute from "./components/protectedroute/ProtectedRoute";
+import LoginModal from "./components/login/LoginModal";
+import RecuperarContrasena from "./components/recuperarcontrasena/RecuparerContrasena";
+import Footer from "./components/footer/Footer";
+
 function usePageTitle() {
   const location = useLocation();
 
@@ -48,72 +52,81 @@ function usePageTitle() {
   }, [location]);
 }
 
-// ✅ Componente para definir las rutas + actualizar título
-function AppRoutes() {
+function AppRoutes({
+  openLoginModal,
+  showLogin,
+  closeLoginModal,
+  handleSubmitLogin,
+}) {
   usePageTitle();
 
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/plan-details/:planId" element={<PlanDetailsPage />} />
-      <Route path="/clases" element={<ClasesC />} />
-      <Route path="/cuenta" element={<Cuenta />} />
-      <Route path="/pagar" element={<Planes />} />
-      <Route path="/solicitar-clase" element={<SolicitarClasesC />} />
-      <Route path="/reset-password" element={<RecuperarContrasena />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
-  );
-}
+    <div
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
+      <Navbar onLoginClick={openLoginModal} />
 
-// ✅ App principal
-function App() {
-  return (
-    <UsuariosProvider>
-
-      {" "}
-      {/* <--- Agregá esto */}
-      <ScrollTopButton/>
-
-      <Router>
-        <div className="App d-flex flex-column min-vh-100">
-          <Navbar />
-          <div className="flex-grow-1">
-            <AppRoutes />
-          </div>
-          <Footer />
-        </div>
-      </Router>
-    </UsuariosProvider>
-  );
-}
-
-
-/* import "./App.css";
-import Planes from "./pages/Planes";
-import  ScrollToTopButton from "./components/ScrollToTopButton/ScrollToTopButton";
-
-
-function App() {
-  return (
-    <Router>
-      <div className="App">
-       <ScrollToTopButton /> 
+      <main style={{ flexGrow: 1 }}>
         <Routes>
+          <Route path="/login" element={<LoginModal />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/plan-details/:planId" element={<PlanDetailsPage />} />
-          <Route path="/pagar" element={<Planes />} />
+          <Route path="/clases" element={<ClasesC />} />
+          <Route path="/cuenta" element={<Cuenta />} />
+
+          <Route
+            path="/pagar"
+            element={
+              <ProtectedRoute openLoginModal={openLoginModal}>
+                <Planes />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/solicitar-clase" element={<SolicitarClasesC />} />
+          <Route path="/reset-password" element={<RecuperarContrasena />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </div>
-    </Router>
+      </main>
 
+      <Footer onLoginClick={openLoginModal} />
+
+      <LoginModal
+        isOpen={showLogin}
+        onClose={closeLoginModal}
+        onLogin={handleSubmitLogin}
+      />
+    </div>
   );
-} */
+}
+  
+
+
+function App() {
+  const [showLogin, setShowLogin] = useState(false);
+
+  const openLoginModal = () => setShowLogin(true);
+  const closeLoginModal = () => setShowLogin(false);
+
+  const handleSubmitLogin = (userData) => {
+    console.log("Login exitoso:", userData);
+    closeLoginModal();
+  };
+
+  return (
+    <UsuariosProvider>
+      <Router>
+        <AppRoutes
+          openLoginModal={openLoginModal}
+          showLogin={showLogin}
+          closeLoginModal={closeLoginModal}
+          handleSubmitLogin={handleSubmitLogin}
+        />
+      </Router>
+    </UsuariosProvider>
+  );
+}
 
 
 export default App;
