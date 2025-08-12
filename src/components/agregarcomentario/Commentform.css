@@ -73,7 +73,6 @@
 .comment-form button:hover {
   background: linear-gradient(90deg, orange);
 }
-
 .success-message {
   margin-top: 1rem;
   text-align: center;
