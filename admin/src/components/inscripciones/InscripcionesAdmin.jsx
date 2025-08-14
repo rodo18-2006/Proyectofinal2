@@ -8,7 +8,7 @@ function InscripcionesAdmin() {
   useEffect(() => {
     const obtenerTurnos = async () => {
       try {
-        const respuesta = await fetch("http://localhost:5000/api/turnos"); // ajustá el puerto si es necesario
+        const respuesta = await fetch("http://localhost:5000/api/turnos");
         const data = await respuesta.json();
         setInscripciones(data);
       } catch (error) {
@@ -59,7 +59,7 @@ function InscripcionesAdmin() {
               className="d-flex justify-content-between align-items-center"
             >
               <div>
-                <strong>👤 {inscripcion.usuarioId}</strong> <br />
+                <strong>👤 {inscripcion.nombreUsuario}</strong> <br />
                 Clase: <strong>{inscripcion.clase}</strong> <br />
                 Entrenador: {inscripcion.entrenador} <br />
                 Fecha: {inscripcion.fecha} <br />

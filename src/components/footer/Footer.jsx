@@ -54,7 +54,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/plans" className="footer-link">
+                <Link to="/pagar" className="footer-link">
                   Planes
                 </Link>
               </li>

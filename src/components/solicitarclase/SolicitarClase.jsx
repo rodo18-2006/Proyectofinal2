@@ -1,4 +1,4 @@
-/* import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import "./SolicitarClase.css";
 
@@ -10,14 +10,33 @@ export default function SolicitarClase() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({});
+  const [usuario, setUsuario] = useState(null);
 
-  const clases = ["Musculación", "Yoga", "Funcional", "Spinning"];
+  const clases = [
+    "Musculación",
+    "Yoga",
+    "Funcional",
+    "Spinning",
+    "HIT",
+    "Zumba",
+    "Pilates",
+    "CrossFit",
+  ];
   const entrenadores = [
     "Carlos Mendez",
     "Ana Rodriguez",
     "Miguel Torres",
     "Laura Gomez",
   ];
+
+  // 📌 Leer usuario del localStorage al montar
+ useEffect(() => {
+   const usuarionombre = JSON.parse(localStorage.getItem("user"));
+   if (usuarionombre) {
+     setUsuario(usuarionombre);
+   }
+ }, []);
+
 
   const validarCampos = () => {
     const nuevosErrores = {};
@@ -32,7 +51,9 @@ export default function SolicitarClase() {
       const fechaSeleccionada = new Date(`${fecha}T${hora}:${minutos}`);
       const ahora = new Date();
 
-      if (fechaSeleccionada < ahora) {
+      if (isNaN(fechaSeleccionada.getTime())) {
+        nuevosErrores.horario = "Fecha u hora inválida";
+      } else if (fechaSeleccionada < ahora) {
         nuevosErrores.horario = "La fecha y hora deben ser futuras";
       } else if (parseInt(hora) < 8 || parseInt(hora) >= 22) {
         nuevosErrores.horario =
@@ -51,8 +72,9 @@ export default function SolicitarClase() {
 
     if (!validarCampos()) return;
 
-    const usuarioId = localStorage.getItem("usuarioId");
-    if (!usuarioId) {
+    // Leer usuario directamente desde localStorage
+    const usuarioGuardado = JSON.parse(localStorage.getItem("user"));
+    if (!usuarioGuardado || !usuarioGuardado.id) {
       setError("No se encontró usuario logueado. Por favor inicia sesión.");
       return;
     }
@@ -62,7 +84,8 @@ export default function SolicitarClase() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          usuarioId,
+          usuarioId: usuarioGuardado.id, // <-- usar "id" según tu localStorage
+          nombreUsuario: usuarioGuardado.nombre,
           clase,
           entrenador,
           fecha,
@@ -73,12 +96,22 @@ export default function SolicitarClase() {
       const data = await res.json();
 
       if (!res.ok) {
-        // Captura mensaje personalizado del backend (como el de 10 personas)
         setError(data.mensaje || "Error al reservar la clase");
         return;
       }
 
-      setMensaje("✅ " + data.mensaje);
+   setMensaje(
+     `✅ Clase reservada con éxito
+👤 ${usuarioGuardado.nombre}
+Clase: ${clase}
+Entrenador: ${entrenador}
+Fecha: ${fecha}
+Horario: ${horario}`
+   );
+
+
+
+      // Limpiar campos
       setClase("");
       setEntrenador("");
       setFecha("");
@@ -90,9 +123,15 @@ export default function SolicitarClase() {
     }
   };
 
+
   return (
     <Container className="solicitar-clase-container mt-4">
       <h2>📅 Solicitar Clase</h2>
+      {usuario && (
+        <p>
+          Usuario: <strong>{usuario.nombre}</strong>
+        </p>
+      )}
       <Form onSubmit={handleSubmit} noValidate>
         <Form.Group className="mb-3">
           <Form.Label>Clase</Form.Label>
@@ -180,15 +219,14 @@ export default function SolicitarClase() {
     </Container>
   );
 }
- */
 
-import React, { useState, useContext } from "react";
+/* import React, { useState, useContext } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import axios from "axios";
 import { UsuariosContext } from "../context/UsuariosContext";
 
 export default function SolicitarClase() {
-  const { user } = useContext(UsuariosContext); // 👈 Traemos el usuario del contexto
+  const { user, loading } = useContext(UsuariosContext); a
 
   const [clase, setClase] = useState("");
   const [entrenador, setEntrenador] = useState("");
@@ -198,18 +236,15 @@ export default function SolicitarClase() {
   const [error, setError] = useState(null);
   const [errores, setErrores] = useState({});
 
+  if (loading) return <p>Cargando usuario...</p>;
+  if (!user) return <p>Debes iniciar sesión para solicitar una clase.</p>;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user?._id) {
-      setError("Debes iniciar sesión para solicitar una clase.");
-      return;
-    }
-
-    // Validar campos
     const nuevosErrores = {};
-    if (!clase) nuevosErrores.clase = true;
-    if (!entrenador) nuevosErrores.entrenador = true;
+    if (!clase.trim()) nuevosErrores.clase = true;
+    if (!entrenador.trim()) nuevosErrores.entrenador = true;
     if (!fecha) nuevosErrores.fecha = true;
     if (!horario) nuevosErrores.horario = true;
 
@@ -221,18 +256,17 @@ export default function SolicitarClase() {
       return;
     }
 
-    // Validación de fecha y hora
-    const hora = parseInt(horario.split(":")[0]);
     const fechaHora = new Date(`${fecha}T${horario}`);
     const ahora = new Date();
+    const horaInt = parseInt(horario.split(":")[0]);
 
     if (fechaHora < ahora) {
-      setError("No puedes reservar en el pasado");
+      setError("La fecha u hora seleccionada ya pasó. Elige otra.");
       setMensaje(null);
       return;
     }
 
-    if (hora < 8 || hora >= 22) {
+    if (horaInt < 8 || horaInt >= 22) {
       setError("El horario debe estar entre las 08:00 y 21:59");
       setMensaje(null);
       return;
@@ -242,7 +276,7 @@ export default function SolicitarClase() {
       const response = await axios.post(
         "http://localhost:5000/api/turnos/reservar",
         {
-          usuarioId: user._id, // 👈 Ahora se usa el ID real
+          usuarioId: user._id, 
           clase,
           entrenador,
           fecha,
@@ -252,12 +286,14 @@ export default function SolicitarClase() {
 
       setMensaje(response.data.mensaje);
       setError(null);
+
       setClase("");
       setEntrenador("");
       setFecha("");
       setHorario("");
       setErrores({});
     } catch (err) {
+      console.error("Error al reservar:", err.response || err);
       setMensaje(null);
       setError(
         err.response?.data?.mensaje || "Ocurrió un error al reservar el turno"
@@ -272,6 +308,12 @@ export default function SolicitarClase() {
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Form onSubmit={handleSubmit}>
+     
+        <Form.Group className="mb-3">
+          <Form.Label>Usuario</Form.Label>
+          <Form.Control type="text" value={user?.nombre || ""} disabled />
+        </Form.Group>
+
         <Form.Group className="mb-3">
           <Form.Label>Clase</Form.Label>
           <Form.Select
@@ -348,3 +390,4 @@ export default function SolicitarClase() {
     </Container>
   );
 }
+ */

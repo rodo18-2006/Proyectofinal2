@@ -66,7 +66,7 @@ export default function UsuariosRegistrados() {
 
   return (
     <Container className="mt-4">
-      <h2 className="text-center mb-4">🎫 Carnets de Usuarios Registrados</h2>
+      <h2 className="text-center mb-4">Usuarios Registrados</h2>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <p>
           <strong>Usuarios activos:</strong> {usuarios.length}

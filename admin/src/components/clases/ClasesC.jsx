@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   Card,
   Col,
@@ -12,14 +11,19 @@ import {
 
 export default function ClasesC() {
   const [clases, setClases] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [errores, setErrores] = useState({});
 
-  
-  useEffect(() => {
-    fetch("http://localhost:5000/api/clases")
-      .then((res) => res.json())
-      .then((data) => setClases(data))
-      .catch((err) => console.error("Error al cargar clases:", err));
-  }, []);
+  const [formData, setFormData] = useState({
+    clase: "",
+    entrenador: "",
+    especialidad: "",
+    experiencia: "",
+    horario: "",
+    fecha: "",
+  });
+
   const entrenadores = [
     {
       nombre: "Carlos Méndez",
@@ -43,6 +47,46 @@ export default function ClasesC() {
     },
   ];
 
+  const obtenerClases = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/clases");
+      const data = await res.json();
+      setClases(data);
+    } catch (err) {
+      console.error("Error al cargar clases:", err);
+    }
+  };
+
+  useEffect(() => {
+    obtenerClases();
+  }, []);
+
+  const handleShowModal = (index = null) => {
+    if (index !== null) {
+      setFormData(clases[index]);
+      setEditIndex(index);
+    } else {
+      setFormData({
+        clase: "",
+        entrenador: "",
+        especialidad: "",
+        experiencia: "",
+        horario: "",
+        fecha: "",
+      });
+      setEditIndex(null);
+    }
+    setErrores({});
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => setShowModal(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleEntrenadorChange = (e) => {
     const selected = entrenadores.find((t) => t.nombre === e.target.value);
     if (selected) {
@@ -52,107 +96,63 @@ export default function ClasesC() {
         especialidad: selected.especialidad,
         experiencia: selected.experiencia,
       }));
-    }
-  };
-
-  const [showModal, setShowModal] = useState(false);
- const [formData, setFormData] = useState({
-   nombre: "",
-   entrenador: "",
-   especialidad: "",
-   experiencia: "",
-   horario: "",
-   fecha: "", // nuevo
- });
-
-  const [editIndex, setEditIndex] = useState(null);
-
-  const handleShowModal = (index = null) => {
-    if (index !== null) {
-      setFormData(clases[index]);
-      setEditIndex(index);
     } else {
-      setFormData({
-        nombre: "",
+      setFormData((prev) => ({
+        ...prev,
         entrenador: "",
         especialidad: "",
         experiencia: "",
-        horario: "",
-      });
-      setEditIndex(null);
+      }));
     }
-    setShowModal(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const validarFormulario = () => {
+    let nuevosErrores = {};
+    if (!formData.clase) nuevosErrores.clase = "Debes seleccionar una clase.";
+    if (!formData.entrenador)
+      nuevosErrores.entrenador = "Selecciona un entrenador.";
+    if (!formData.horario) nuevosErrores.horario = "Ingresa un horario.";
+    if (!formData.fecha) nuevosErrores.fecha = "Selecciona una fecha.";
+    setErrores(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
   };
 
   const handleSubmit = async () => {
-    if (editIndex !== null) {
-      // Editar clase
-      const claseEditada = clases[editIndex];
-      try {
-        const res = await fetch(
-          `http://localhost:5000/api/clases/${claseEditada._id}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-          }
-        );
-        const data = await res.json();
-
-        const nuevasClases = [...clases];
-        nuevasClases[editIndex] = data;
-        setClases(nuevasClases);
-      } catch (error) {
-        console.error("Error al editar clase:", error);
-      }
-    } else {
-      // Agregar clase
-      try {
-        const res = await fetch("http://localhost:5000/api/clases", {
+    if (!validarFormulario()) return;
+    try {
+      if (editIndex !== null) {
+        const claseEditada = clases[editIndex];
+        await fetch(`http://localhost:5000/api/clases/${claseEditada._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        await fetch("http://localhost:5000/api/clases", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
-        const data = await res.json();
-        setClases([...clases, data]);
-      } catch (error) {
-        console.error("Error al agregar clase:", error);
       }
+      setShowModal(false);
+      obtenerClases();
+    } catch (error) {
+      console.error("Error al guardar clase:", error);
     }
-    setShowModal(false);
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("¿Estás seguro de que quieres eliminar esta clase?"))
       return;
-
     try {
-      const res = await fetch(`http://localhost:5000/api/clases/${id}`, {
+      await fetch(`http://localhost:5000/api/clases/${id}`, {
         method: "DELETE",
       });
-
-      if (res.ok) {
-        setClases(clases.filter((clase) => clase._id !== id));
-      } else {
-        console.error("Error al eliminar clase");
-      }
+      obtenerClases();
     } catch (error) {
       console.error("Error de conexión al eliminar clase:", error);
     }
   };
-
 
   return (
     <Container className="my-4">
@@ -167,7 +167,7 @@ export default function ClasesC() {
           <Col key={index} md={6} lg={4} className="mb-4">
             <Card className="h-100 shadow-sm">
               <Card.Body>
-                <Card.Title>{clase.nombre}</Card.Title>
+                <Card.Title>{clase.clase}</Card.Title>
                 <Card.Subtitle className="mb-1 text-muted">
                   🧑‍🏫 {clase.entrenador} - {clase.especialidad}
                 </Card.Subtitle>
@@ -177,7 +177,6 @@ export default function ClasesC() {
                 <Card.Text className="text-muted">
                   🔁 {clase.experiencia} de experiencia
                 </Card.Text>
-
                 <Button
                   variant="outline-secondary"
                   size="sm"
@@ -185,7 +184,6 @@ export default function ClasesC() {
                 >
                   ✏️ Editar
                 </Button>
-
                 <Button
                   variant="outline-danger"
                   size="sm"
@@ -208,21 +206,36 @@ export default function ClasesC() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="formNombre" className="mb-2">
+            <Form.Group controlId="formClase" className="mb-2">
               <Form.Label>Nombre de la clase</Form.Label>
-              <Form.Control
-                type="text"
-                name="nombre"
-                value={formData.nombre}
+              <Form.Select
+                name="clase"
+                value={formData.clase}
                 onChange={handleChange}
-              />
+                isInvalid={!!errores.clase}
+              >
+                <option value="">Selecciona una clase</option>
+                <option value="Musculación">Musculación</option>
+                <option value="Funcional">Funcional</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Spinning">Spinning</option>
+                <option value="HIT">HIT</option>
+                <option value="Zumba">Zumba</option>
+                <option value="Pilates">Pilates</option>
+                <option value="CrossFit">CrossFit</option>
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errores.clase}
+              </Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group controlId="formEntrenador" className="mb-2">
               <Form.Label>Entrenador</Form.Label>
               <Form.Select
                 name="entrenador"
                 value={formData.entrenador}
                 onChange={handleEntrenadorChange}
+                isInvalid={!!errores.entrenador}
               >
                 <option value="">Seleccione un entrenador</option>
                 {entrenadores.map((e, i) => (
@@ -231,6 +244,9 @@ export default function ClasesC() {
                   </option>
                 ))}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errores.entrenador}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="formEspecialidad" className="mb-2">
@@ -242,6 +258,7 @@ export default function ClasesC() {
                 onChange={handleChange}
               />
             </Form.Group>
+
             <Form.Group controlId="formExperiencia" className="mb-2">
               <Form.Label>Experiencia</Form.Label>
               <Form.Control
@@ -251,6 +268,7 @@ export default function ClasesC() {
                 onChange={handleChange}
               />
             </Form.Group>
+
             <Form.Group controlId="formHorario" className="mb-2">
               <Form.Label>Horario</Form.Label>
               <Form.Control
@@ -258,16 +276,29 @@ export default function ClasesC() {
                 name="horario"
                 value={formData.horario}
                 onChange={handleChange}
+                isInvalid={!!errores.horario}
               />
+              <Form.Control.Feedback type="invalid">
+                {errores.horario}
+              </Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group controlId="formFecha" className="mb-2">
               <Form.Label>Fecha</Form.Label>
               <Form.Control
                 type="date"
                 name="fecha"
-                value={formData.fecha ? formData.fecha.split("T")[0] : ""}
+                value={
+                  formData.fecha
+                    ? new Date(formData.fecha).toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={handleChange}
+                isInvalid={!!errores.fecha}
               />
+              <Form.Control.Feedback type="invalid">
+                {errores.fecha}
+              </Form.Control.Feedback>
             </Form.Group>
           </Form>
         </Modal.Body>

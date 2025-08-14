@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Footer from "../components/footer/Footer";
+
 import Hero from "../components/hero/Hero";
 import Navbar from "../components/navbar/Navbar";
 import Plans from "../components/plan/Plans";
@@ -11,6 +11,7 @@ import Weather from "../components/weather/Weather";
 
 import ComentariosContainer from "../components/comentarioscontainer/ComentariosContainer";
 import Paginacion from "../components/paginacion/Paginacion";
+import Footer from "../components/footer/Footer";
 
 export default function HomePage() {
   const [allTestimonials, setAllTestimonials] = useState([

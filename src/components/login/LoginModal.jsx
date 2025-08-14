@@ -155,32 +155,43 @@ export default function LoginModal({ isOpen, onClose }) {
     }
   };
 
-  const handleSubmitLogin = async (e) => {
-    e.preventDefault();
-    if (!validateLogin()) return;
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/usuarios/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.mensaje || "Error al iniciar sesión");
+ const handleSubmitLogin = async (e) => {
+   e.preventDefault();
+   if (!validateLogin()) return;
+   setLoading(true);
+   try {
+     const res = await fetch("http://localhost:5000/api/usuarios/login", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ email, password }),
+     });
+     const data = await res.json();
+     if (!res.ok) throw new Error(data.mensaje || "Error al iniciar sesión");
 
-      Swal.fire({ icon: "success", title: "Inicio de sesión exitoso" });
+     Swal.fire({ icon: "success", title: "Inicio de sesión exitoso" });
 
-      localStorage.setItem("token", data.token);
+     // Guardar usuario completo en localStorage
+     localStorage.setItem(
+       "user",
+       JSON.stringify({
+         _id: data.usuario._id,
+         nombre: data.usuario.nombre,
+         apellido: data.usuario.apellido,
+         email: data.usuario.email,
+         plan: data.usuario.plan,
+         token: data.token, // si quieres mantener el token también
+       })
+     );
 
-      login(data.usuario);
+     login(data.usuario); // igual para tu context
+     onClose();
+   } catch (err) {
+     Swal.fire({ icon: "error", title: "Error", text: err.message });
+   } finally {
+     setLoading(false);
+   }
+ };
 
-      onClose(); 
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "Error", text: err.message });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleRecover = async (e) => {
     e.preventDefault();

@@ -33,6 +33,9 @@ app.use("/api/turnos", turnosRouter);
 const contactRoutes = require("./routes/contact");
 app.use("/api/contact", contactRoutes);
 
+const administradorRoutes = require("./routes/administrador");
+app.use("/api/admins", administradorRoutes);
+
 
 // ✅ Ruta de pagos (solo una vez)
 const pagosRoutes = require("./routes/pagos");
